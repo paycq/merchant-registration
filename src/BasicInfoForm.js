@@ -10,9 +10,11 @@ import {
     Modal,
     Upload,
     PlusOutlined,
-    DatePicker, Checkbox,
+    DatePicker, Checkbox, Cascader,
 } from './modules.js'
+import { industryCategoryOptions } from './industry_category.js'
 
+const { Option } = Select
 const { Item: FormItem } = Form
 const { Link } = Typography
 const { RangePicker } = DatePicker
@@ -39,7 +41,6 @@ const _BasicInfoForm = css`
     font-size: 16px;
     line-height: 60px;
     height: 60px;
-    opacity: .8;
     border-bottom: 1px solid #dedede;
   }
 
@@ -54,8 +55,8 @@ const _BasicInfoForm = css`
   }
 
   & .ant-upload {
-    width: 128px;
-    height: 128px;
+    width: 164px;
+    height: 102px;
   }
 `
 
@@ -76,7 +77,7 @@ export default function BasicInfoForm(props) {
 
     return html`
         <div class=${_BasicInfoForm}>
-            <div class="title">商户基本信息</div>
+            <div class="title color-gray-600">商户基本信息</div>
             <div class="form">
                 <${Form} name="account"
                          onFinish=${handleFinish}
@@ -88,9 +89,9 @@ export default function BasicInfoForm(props) {
                                  name="merchantType"
                                  rules=${[{ required: true, message: '请选择商户类型', }]}>
                         <${Select} defaultValue="1">
-                            <Option value="1">个体商户</Option>
-                            <Option value="2">企业商户</Option>
-                            <Option value="2">小微商户</Option>
+                            <${Option} value="1">个体商户</Option>
+                            <${Option} value="2">企业商户</Option>
+                            <${Option} value="2">小微商户</Option>
                         </Select>
                     </FormItem>
                     <${FormItem} label="商户简称">
@@ -111,7 +112,7 @@ export default function BasicInfoForm(props) {
                         <${Upload} listType="picture-card">
                             <div>
                                 <${PlusOutlined}/>
-                                <div style=${{ marginTop: 8 }}>Upload</div>
+                                <div style=${{ marginTop: 8 }}>上传</div>
                             </div>
                         </Upload>
                     </FormItem>
@@ -139,16 +140,72 @@ export default function BasicInfoForm(props) {
                                  rules=${[{ required: true, message: '请输入营业执照注册地址', }]}>
                         <${Input} placeholder="请输入营业执照注册地址"/>
                     </FormItem>
-                    <${FormItem} label="营业执照有效期">
+                    <${FormItem} label="营业执照有效期" required>
                         <${Space}>
                             <${FormItem} label="营业执照有效期"
                                          noStyle
+                                         rules=${[{ required: true, message: '请输入营业执照有效期', }]}
                                          name="businessLicensePeriod">
                                 <${RangePicker} allowEmpty=${[false, true]}/>
                             </FormItem>
                             <${Checkbox}>长期</Checkbox>
                         </Space>
                     </FormItem>
+                    <${FormItem} label="法人身份证照片"
+                                 name="legalPersonIdPhoto"
+                                 required>
+                        <div class="inline-block">
+                            <${Upload} listType="picture-card">
+                                <div>
+                                    <${PlusOutlined}/>
+                                    <div style=${{ marginTop: 8 }}>上传</div>
+                                </div>
+                            </Upload>
+                            <div class="text-center color-gray-600">身份证人像面</div>
+                        </div>
+                        <div class="inline-block">
+                            <${Upload} listType="picture-card">
+                                <div>
+                                    <${PlusOutlined}/>
+                                    <div style=${{ marginTop: 8 }}>上传</div>
+                                </div>
+                            </Upload>
+                            <div class="text-center color-gray-600">身份证国徽面</div>
+                        </div>
+                    </FormItem>
+                    <${FormItem} label="身份证有效期" required>
+                        <${Space}>
+                            <${FormItem} label="身份证有效期"
+                                         noStyle
+                                         rules=${[{ required: true, message: '请输入身份证有效期', }]}
+                                         name="idPeriod">
+                                <${RangePicker} allowEmpty=${[false, true]}/>
+                            </FormItem>
+                            <${Checkbox}>长期</Checkbox>
+                        </Space>
+                    </FormItem>
+                    <${FormItem} label="行业类目"
+                                 labelCol=${{ span: 4 }} wrapperCol=${{ span: 16 }}
+                                 name="industryCategory"
+                                 rules=${[{ required: true, message: '请输入行业类目', }]}>
+                        <${Cascader} options=${industryCategoryOptions} placeholder="请输入行业类目"/>
+                    </FormItem>
+                    <${FormItem} label="经营地址"
+                                 wrapperCol=${{ span: 16 }}
+                                 name="businessAddress"
+                                 rules=${[{ required: true, message: '请输入经营地址', }]}>
+                        <${Select} style=${{ width: '120px', marginRight: '8px', }} placeholder="请选择省">
+                            <${Option} value="shanghai">上海市</Option>
+                        </Select>
+                        <${Select} style=${{ width: '120px', marginRight: '8px', }} placeholder="请选择市">
+                            <${Option} value="shanghai">上海市</Option>
+                        </Select>
+                        <${Select} style=${{ width: '120px', marginRight: '8px', }} placeholder="请选择区/县">
+                            <${Option} value="shanghai">上海市</Option>
+                        </Select>
+                        <${Input} style=${{ width: '360px' }} placeholder="详细地址需超过5个字, 详细到门牌号"/>
+                    </FormItem>
+                    <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
                         <${Button} htmlType="button">
                             返回

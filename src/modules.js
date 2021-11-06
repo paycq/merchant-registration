@@ -24,5 +24,9 @@ export const {
     Upload,
     DatePicker,
     Checkbox,
+    Cascader,
+    Row,
+    Col,
+    Divider,
 } = window['antd']
 

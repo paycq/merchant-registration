@@ -12,7 +12,6 @@ const _AccountInformationForm = css`
     font-size: 16px;
     line-height: 60px;
     height: 60px;
-    opacity: .8;
     border-bottom: 1px solid #dedede;
   }
 
@@ -38,7 +37,7 @@ export default function AccountInfoForm(props) {
 
     return html`
         <div class=${_AccountInformationForm}>
-            <div class="title">商户账号信息</div>
+            <div class="title color-gray-600">商户账号信息</div>
             <div class="form">
                 <${Form} name="account"
                          onFinish=${handleFinish}
@@ -62,8 +61,9 @@ export default function AccountInfoForm(props) {
                                  name="loginAccount"
                                  extra="注：商户初始密码为注册手机号后6位"
                                  rules=${[{ required: true, message: '请输入登陆账号', }]}>
-                        <${Input} placeholder="建议使用手机号，支持2-50位数字/字母/中文"/>
+                        <${Input} placeholder="建议使用手机号，支持2-50位数字/字母/中文" allowClear/>
                     </FormItem>
+                    <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
                         <${Button} htmlType="button">
                             返回

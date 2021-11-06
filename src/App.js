@@ -1,6 +1,7 @@
 import { css, html, Steps, useState } from './modules.js'
 import AccountInfoForm from './AccountInfoForm.js'
 import BasicInfoForm from './BasicInfoForm.js'
+import BillingInfoForm from './BillingInfoForm.js'
 
 const { Step } = Steps
 
@@ -10,6 +11,8 @@ function getFormByStep(step) {
             return AccountInfoForm
         case 1:
             return BasicInfoForm
+        case 2:
+            return  BillingInfoForm
     }
 }
 
@@ -29,7 +32,7 @@ const _App = css`
 
 export default function App(props) {
 
-    const [step, setStep] = useState(1)
+    const [step, setStep] = useState(2)
 
     const InputForm = getFormByStep(step)
 

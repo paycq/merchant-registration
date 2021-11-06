@@ -2,6 +2,17 @@ import { render, createElement, injectGlobal, html, ConfigProvider, locales } fr
 import App from './App.js'
 
 injectGlobal`
+  .color-gray-600 {
+    color: #5a5a5a;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .inline-block {
+    display: inline-block;
+  }
 `
 
 function AppWrapper() {
