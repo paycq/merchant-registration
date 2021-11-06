@@ -7,7 +7,8 @@ const htm = window['htm']
 export const html = htm.bind(createElement);
 
 export const {
-    PlusOutlined
+    PlusOutlined,
+    InfoCircleOutlined,
 } = window['icons']
 
 export const {
@@ -28,5 +29,6 @@ export const {
     Row,
     Col,
     Divider,
+    Tooltip,
 } = window['antd']
 

@@ -10,7 +10,14 @@ import {
     Modal,
     Upload,
     PlusOutlined,
-    DatePicker, Checkbox, Cascader, Col, Row, Divider,
+    DatePicker,
+    Checkbox,
+    Cascader,
+    Col,
+    Row,
+    Divider,
+    Tooltip,
+    InfoCircleOutlined,
 } from './modules.js'
 
 const { Option } = Select
@@ -47,7 +54,7 @@ const _BillingInfoForm = css`
   }
 
   & .unit-tip {
-    margin-left: 4px;
+    margin: 0 4px;
     font-size: 12px;
   }
 `
@@ -119,39 +126,33 @@ export default function BillingInfoForm(props) {
                 <div class="title color-gray-600">商户费率</div>
                 <div class="form">
                     <${Row} gutter=${16}>
-                        <${Col} className="gutter-row" span=${6}>
+                        <${Col} className="gutter-row" span=${8}>
                         <${FormItem} name="cardRate"
-                                     label="借记卡费率"
+                                     label="微信费率"
                                      ...${rateLayout}
+                                     extra="请设置2.50 ~ 100.00的值"
                                      rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
+                            <${Input} defaultValue="3.8" style=${{ width: '50%', }}/>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
-                        <${Col} className="gutter-row" span=${6}>
+                        <${Col} className="gutter-row" span=${8}>
                         <${FormItem} name="cardRate"
-                                     label="借记卡费率"
+                                     label="支付宝费率"
                                      ...${rateLayout}
+                                     extra="请设置2.50 ~ 100.00的值"
                                      rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
+                            <${Input} defaultValue="3.8" style=${{ width: '50%', }}/>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
-                        <${Col} className="gutter-row" span=${6}>
+                        <${Col} className="gutter-row" span=${8}>
                         <${FormItem} name="cardRate"
-                                     label="借记卡费率"
+                                     label="银联费率"
                                      ...${rateLayout}
+                                     extra="请设置2.50 ~ 100.00的值"
                                      rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
-                            <span class="unit-tip">(单位:千分之一)</span>
-                        </FormItem>
-                        </Col>
-                        <${Col} className="gutter-row" span=${6}>
-                        <${FormItem} name="cardRate"
-                                     label="借记卡费率"
-                                     ...${rateLayout}
-                                     rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
+                            <${Input} defaultValue="3.8" style=${{ width: '50%', }}/>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
@@ -160,39 +161,36 @@ export default function BillingInfoForm(props) {
                         <strong>银行卡费率（D1结算）</strong>
                     </Divider>
                     <${Row} gutter=${16}>
-                        <${Col} className="gutter-row" span=${6}>
+                        <${Col} className="gutter-row" span=${8}>
                         <${FormItem} name="cardRate"
                                      label="借记卡费率"
                                      ...${rateLayout}
+                                     extra="请设置4.20 ~ 50.00的值"
                                      rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
+                            <${Input} defaultValue="4.20" style=${{ width: '50%', }}/>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
-                        <${Col} className="gutter-row" span=${6}>
+                        <${Col} className="gutter-row" span=${8}>
                         <${FormItem} name="cardRate"
-                                     label="借记卡费率"
+                                     label="封顶手续费"
                                      ...${rateLayout}
+                                     extra="请设置18 ~ 500的值"
                                      rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
-                            <span class="unit-tip">(单位:千分之一)</span>
+                            <${Input} defaultValue="18" style=${{ width: '50%', }}/>
+                            <span class="unit-tip">元</span>
+                            <${Tooltip} title="若封顶设置为18元代理商则可能无返佣，建议封顶金额设置大于18元">
+                                <${InfoCircleOutlined}/>
+                            </Tooltip>
                         </FormItem>
                         </Col>
-                        <${Col} className="gutter-row" span=${6}>
+                        <${Col} className="gutter-row" span=${8}>
                         <${FormItem} name="cardRate"
-                                     label="借记卡费率"
+                                     label="贷记卡费率"
                                      ...${rateLayout}
+                                     extra="请设置5.20 ~ 50.00的值"
                                      rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
-                            <span class="unit-tip">(单位:千分之一)</span>
-                        </FormItem>
-                        </Col>
-                        <${Col} className="gutter-row" span=${6}>
-                        <${FormItem} name="cardRate"
-                                     label="借记卡费率"
-                                     ...${rateLayout}
-                                     rules=${[{ required: true }]}>
-                            <Input value="4.20" style=${{ width: '50%', }}/>
+                            <${Input} defaultValue="5.20" style=${{ width: '50%', }}/>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
@@ -201,6 +199,9 @@ export default function BillingInfoForm(props) {
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
                         <${Button} htmlType="button">
                             返回
+                        </Button>
+                        <${Button} htmlType="button">
+                            上一步
                         </Button>
                         <${Button} type="primary" htmlType="submit">
                             下一步

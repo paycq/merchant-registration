@@ -2,6 +2,8 @@ import { css, html, Steps, useState } from './modules.js'
 import AccountInfoForm from './AccountInfoForm.js'
 import BasicInfoForm from './BasicInfoForm.js'
 import BillingInfoForm from './BillingInfoForm.js'
+import StoreInfoForm from './StoreInfoForm.js'
+import SubmitForReview from './SubmitForReview.js'
 
 const { Step } = Steps
 
@@ -12,7 +14,11 @@ function getFormByStep(step) {
         case 1:
             return BasicInfoForm
         case 2:
-            return  BillingInfoForm
+            return BillingInfoForm
+        case 3:
+            return StoreInfoForm
+        case 4:
+            return SubmitForReview
     }
 }
 
@@ -30,9 +36,9 @@ const _App = css`
   }
 `
 
-export default function App(props) {
+export default function MerchantRegistration(props) {
 
-    const [step, setStep] = useState(2)
+    const [step, setStep] = useState(4)
 
     const InputForm = getFormByStep(step)
 

@@ -1,5 +1,5 @@
 import { render, createElement, injectGlobal, html, ConfigProvider, locales } from './modules.js'
-import App from './App.js'
+import MerchantRegistration from './MerchantRegistration.js'
 
 injectGlobal`
   .color-gray-600 {
@@ -13,14 +13,18 @@ injectGlobal`
   .inline-block {
     display: inline-block;
   }
+
+  .vertical-top {
+    vertical-align: top;
+  }
 `
 
-function AppWrapper() {
+function App() {
     return html`
         <${ConfigProvider} locale=${locales['zh_CN']}>
-            <${App}/>
+            <${MerchantRegistration}/>
         </ConfigProvider>
     `
 }
 
-render(createElement(AppWrapper), document.getElementById('app'))
+render(createElement(App), document.getElementById('app'))
