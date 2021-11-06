@@ -23,10 +23,15 @@ const _SubmitForReview = css`
 `
 
 export default function SubmitForReview(props) {
+
+    function handleConfirm(ev) {
+        console.log('handleConfirm')
+    }
+
     return html`
         <div class=${_SubmitForReview}>
             <span>提交成功，等待审核</span>
-            <${Button} type="primary" htmlType="submit">我知道了</Button>
+            <${Button} type=${'primary'} htmlType="submit" onClick=${handleConfirm}>我知道了</Button>
         </div>
     `
 }

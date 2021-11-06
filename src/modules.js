@@ -1,6 +1,6 @@
 export const { css, cx, injectGlobal } = window['emotion']
 
-export const { createElement, useState } = window['React']
+export const { createElement, useState, useReducer } = window['React']
 export const { render } = window['ReactDOM']
 
 const htm = window['htm']

@@ -19,7 +19,7 @@ const _AccountInformationForm = css`
     padding: 20px 0;
   }
 
-  & .ant-btn {
+  & .ant-form-item-control-input-content > button.ant-btn {
     min-width: 80px;
     height: 40px;
     margin-left: 8px;
@@ -27,12 +27,19 @@ const _AccountInformationForm = css`
 `
 
 export default function AccountInfoForm(props) {
+    const { state, dispatch } = props
+
     function handleFinish(ev) {
-        console.log('handleFinish', ev)
+        dispatch({ type: 'updateAccountInfo', payload: ev, })
+        dispatch({ type: 'nextStep' })
     }
 
     function handleFinishFailed(ev) {
-        console.log('handleFinishFailed', ev)
+        console.log('handleFinishFailed', JSON.stringify(ev, null, 2))
+    }
+
+    function handleClickBack(ev) {
+        console.log('handleClickBack')
     }
 
     return html`
@@ -65,10 +72,10 @@ export default function AccountInfoForm(props) {
                     </FormItem>
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
-                        <${Button} htmlType="button">
+                        <${Button} onClick=${handleClickBack} htmlType="button">
                             返回
                         </Button>
-                        <${Button} type="primary" htmlType="submit">
+                        <${Button} type=${'primary'} htmlType="submit">
                             下一步
                         </Button>
                     </FormItem>

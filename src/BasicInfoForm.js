@@ -13,6 +13,7 @@ import {
     DatePicker, Checkbox, Cascader,
 } from './modules.js'
 import { industryCategoryOptions } from './industry_category.js'
+import PictureInput from './components/PictureInput.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -48,31 +49,34 @@ const _BasicInfoForm = css`
     padding: 20px 0;
   }
 
-  & .ant-btn {
+  & .ant-form-item-control-input-content > button.ant-btn {
     min-width: 80px;
     height: 40px;
     margin-left: 8px;
-  }
-
-  & .ant-upload {
-    width: 164px;
-    height: 102px;
   }
 `
 
 export default function BasicInfoForm(props) {
 
+    const { state, dispatch } = props
+
     function handleFinish(ev) {
-        console.log('handleFinish', ev)
+        console.log('handleFinish', JSON.stringify(ev, null, 2))
+        dispatch({ type: 'updateBasicInfo', payload: ev, })
+        dispatch({ type: 'nextStep' })
     }
 
     function handleFinishFailed(ev) {
-        console.log('handleFinishFailed', ev)
+        console.log('handleFinishFailed', JSON.stringify(ev, null, 2))
     }
 
     function handleShowMerchantAbbreviation(ev) {
         ev.preventDefault()
         showMerchantAbbreviation()
+    }
+
+    function handleClickPreviousStep(ev) {
+        dispatch({ type: 'previousStep', })
     }
 
     return html`
@@ -82,16 +86,17 @@ export default function BasicInfoForm(props) {
                 <${Form} name="account"
                          onFinish=${handleFinish}
                          onFinishFailed=${handleFinishFailed}
+                         initialValues=${state.basicInfo}
                          labelCol=${{ span: 4 }}
                          wrapperCol=${{ span: 10 }}
                          autoComplete="off">
                     <${FormItem} label="商户类型"
                                  name="merchantType"
                                  rules=${[{ required: true, message: '请选择商户类型', }]}>
-                        <${Select} defaultValue="1">
-                            <${Option} value="1">个体商户</Option>
-                            <${Option} value="2">企业商户</Option>
-                            <${Option} value="2">小微商户</Option>
+                        <${Select}>
+                            <${Option} value="individualMerchants">个体商户</Option>
+                            <${Option} value="enterpriseMerchant">企业商户</Option>
+                            <${Option} value="smallMerchants ">小微商户</Option>
                         </Select>
                     </FormItem>
                     <${FormItem} label="商户简称">
@@ -108,13 +113,8 @@ export default function BasicInfoForm(props) {
                     </FormItem>
                     <${FormItem} label="营业执照"
                                  name="businessLicense"
-                                 rules=${[{ required: true, message: '请输入登陆账号', }]}>
-                        <${Upload} listType="picture-card">
-                            <div>
-                                <${PlusOutlined}/>
-                                <div style=${{ marginTop: 8 }}>上传</div>
-                            </div>
-                        </Upload>
+                                 rules=${[{ required: true, message: '请上传营业执照', }]}>
+                        <${PictureInput}/>
                     </FormItem>
                     <${FormItem} label="公司名称"
                                  name="companyName"
@@ -155,21 +155,19 @@ export default function BasicInfoForm(props) {
                                  name="legalPersonIdPhoto"
                                  required>
                         <div class="inline-block">
-                            <${Upload} listType="picture-card">
-                                <div>
-                                    <${PlusOutlined}/>
-                                    <div style=${{ marginTop: 8 }}>上传</div>
-                                </div>
-                            </Upload>
+                            <${FormItem} name=${['legalPersonIdPhoto', 'A']}
+                                         noStyle
+                                         rules=${[{ required: true, message: '请上传身份证人像面' }]}>
+                                <${PictureInput}/>
+                            </FormItem>
                             <div class="text-center color-gray-600">身份证人像面</div>
                         </div>
                         <div class="inline-block">
-                            <${Upload} listType="picture-card">
-                                <div>
-                                    <${PlusOutlined}/>
-                                    <div style=${{ marginTop: 8 }}>上传</div>
-                                </div>
-                            </Upload>
+                            <${FormItem} name=${['legalPersonIdPhoto', 'B']}
+                                         noStyle
+                                         rules=${[{ required: true, message: '请上传身份证国徽面' }]}>
+                                <${PictureInput}/>
+                            </FormItem>
                             <div class="text-center color-gray-600">身份证国徽面</div>
                         </div>
                     </FormItem>
@@ -210,10 +208,10 @@ export default function BasicInfoForm(props) {
                         <${Button} htmlType="button">
                             返回
                         </Button>
-                        <${Button} htmlType="button">
+                        <${Button} onClick=${handleClickPreviousStep} htmlType="button">
                             上一步
                         </Button>
-                        <${Button} type="primary" htmlType="submit">
+                        <${Button} type=${'primary'} htmlType="submit">
                             下一步
                         </Button>
                     </FormItem>

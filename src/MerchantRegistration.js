@@ -1,11 +1,10 @@
-import { css, html, Steps, useState } from './modules.js'
+import { css, html, useReducer } from './modules.js'
+import StepContent from './StepContent.js'
 import AccountInfoForm from './AccountInfoForm.js'
 import BasicInfoForm from './BasicInfoForm.js'
 import BillingInfoForm from './BillingInfoForm.js'
 import StoreInfoForm from './StoreInfoForm.js'
 import SubmitForReview from './SubmitForReview.js'
-
-const { Step } = Steps
 
 function getFormByStep(step) {
     switch (step) {
@@ -22,39 +21,75 @@ function getFormByStep(step) {
     }
 }
 
+
+const initialState = {
+    step: 1,
+    // form data
+    accountInfo: {},
+    basicInfo: {
+        merchantType: 'individualMerchants',    // 商户类型
+        merchantAbbreviation: undefined,        // 商户简称
+        businessLicense: undefined,             // 营业执照
+    },
+    billingInfo: {},
+    storeInfo: {},
+
+}
+
+function reducer(state, action) {
+    const payload = action.payload || {}
+    switch (action.type) {
+        case 'nextStep':
+            return {
+                ...state,
+                step: state.step + 1,
+            }
+        case 'previousStep':
+            return {
+                ...state,
+                step: state.step - 1,
+            }
+        case 'updateAccountInfo':
+            return {
+                ...state,
+                accountInfo: payload,
+            }
+        case 'updateBasicInfo':
+            return {
+                ...state,
+                basicInfo: payload,
+            }
+        case 'updateBillingInfo':
+            return {
+                ...state,
+                billingInfo: payload,
+            }
+        case 'updateStoreInfo':
+            return {
+                ...state,
+                storeInfo: payload,
+            }
+        default:
+            return state
+    }
+}
+
 const _App = css`
   padding: 20px;
   background-color: #f4f4f4;
-
-  & > .container {
-
-    & > .step-content {
-      background-color: #fff;
-      padding: 40px;
-      border-radius: 2px;
-    }
-  }
 `
 
 export default function MerchantRegistration(props) {
 
-    const [step, setStep] = useState(4)
+    const [state, dispatch] = useReducer(reducer, initialState)
 
-    const InputForm = getFormByStep(step)
+    const InputForm = getFormByStep(state.step)
 
     return html`
         <div class=${_App}>
             <div class="container">
-                <div class="step-content">
-                    <${Steps} current=${step}>
-                        <${Step} title="账户信息"/>
-                        <${Step} title="基本信息"/>
-                        <${Step} title="结算信息和费率"/>
-                        <${Step} title="门店信息"/>
-                        <${Step} title="提交审核"/>
-                    </Steps>
-                </div>
-                <${InputForm}/>
+                <${StepContent} state=${state}></StepContent>
+                <${InputForm} state=${state} dispatch=${dispatch}></InputForm>
             </div>
         </div>
     `

@@ -42,7 +42,7 @@ const _BillingInfoForm = css`
     padding: 20px 0;
   }
 
-  & .ant-btn {
+  & .ant-form-item-control-input-content > button.ant-btn {
     min-width: 80px;
     height: 40px;
     margin-left: 8px;
@@ -203,7 +203,7 @@ export default function BillingInfoForm(props) {
                         <${Button} htmlType="button">
                             上一步
                         </Button>
-                        <${Button} type="primary" htmlType="submit">
+                        <${Button} type=${'primary'} htmlType="submit">
                             下一步
                         </Button>
                     </FormItem>
