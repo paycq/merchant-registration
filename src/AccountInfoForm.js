@@ -49,6 +49,7 @@ export default function AccountInfoForm(props) {
                 <${Form} name="account"
                          onFinish=${handleFinish}
                          onFinishFailed=${handleFinishFailed}
+                         initialValues=${state.accountInfo}
                          labelCol=${{ span: 4 }}
                          wrapperCol=${{ span: 10 }}
                          autoComplete="off">

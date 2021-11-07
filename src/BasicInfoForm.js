@@ -8,12 +8,13 @@ import {
     Space,
     Typography,
     Modal,
-    Upload,
-    PlusOutlined,
-    DatePicker, Checkbox, Cascader,
+    DatePicker,
+    Cascader, useState,
 } from './modules.js'
 import { industryCategoryOptions } from './industry_category.js'
 import PictureInput from './components/PictureInput.js'
+import PeriodInput from './components/PeriodInput.js'
+import AddressInput from './components/AddressInput.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -60,6 +61,19 @@ export default function BasicInfoForm(props) {
 
     const { state, dispatch } = props
 
+    const [form] = Form.useForm()
+
+    const [merchantType, setMerchantType] = useState(state.basicInfo.merchantType)
+
+    function handleSelectMerchantType(ev) {
+        const selectedMerchantType = form.getFieldValue('merchantType')
+        console.log(selectedMerchantType, merchantType)
+        if (selectedMerchantType === merchantType) {
+            return
+        }
+        setMerchantType(selectedMerchantType)
+    }
+
     function handleFinish(ev) {
         console.log('handleFinish', JSON.stringify(ev, null, 2))
         dispatch({ type: 'updateBasicInfo', payload: ev, })
@@ -86,6 +100,7 @@ export default function BasicInfoForm(props) {
                 <${Form} name="account"
                          onFinish=${handleFinish}
                          onFinishFailed=${handleFinishFailed}
+                         form=${form}
                          initialValues=${state.basicInfo}
                          labelCol=${{ span: 4 }}
                          wrapperCol=${{ span: 10 }}
@@ -93,10 +108,10 @@ export default function BasicInfoForm(props) {
                     <${FormItem} label="商户类型"
                                  name="merchantType"
                                  rules=${[{ required: true, message: '请选择商户类型', }]}>
-                        <${Select}>
+                        <${Select} onChange=${handleSelectMerchantType}>
                             <${Option} value="individualMerchants">个体商户</Option>
                             <${Option} value="enterpriseMerchant">企业商户</Option>
-                            <${Option} value="smallMerchants ">小微商户</Option>
+                            <${Option} value="smallMerchants">小微商户</Option>
                         </Select>
                     </FormItem>
                     <${FormItem} label="商户简称">
@@ -111,11 +126,15 @@ export default function BasicInfoForm(props) {
                             </Link>
                         </Space>
                     </FormItem>
-                    <${FormItem} label="营业执照"
-                                 name="businessLicense"
-                                 rules=${[{ required: true, message: '请上传营业执照', }]}>
-                        <${PictureInput}/>
-                    </FormItem>
+
+                    ${['individualMerchants', 'enterpriseMerchant'].includes(merchantType) && html`
+                        <${FormItem} label="营业执照"
+                                     name="businessLicense"
+                                     rules=${[{ required: true, message: '请上传营业执照', }]}>
+                            <${PictureInput}/>
+                        </FormItem>
+                    `}
+
                     <${FormItem} label="公司名称"
                                  name="companyName"
                                  extra=${html`
@@ -130,30 +149,34 @@ export default function BasicInfoForm(props) {
                                  rules=${[{ required: true, message: '请输入公司名称', }]}>
                         <${Input} placeholder="请输入公司名称"/>
                     </FormItem>
-                    <${FormItem} label="营业执照号"
-                                 name="businessLicenseNo"
-                                 rules=${[{ required: true, message: '请输入营业执照号', }]}>
-                        <${Input} placeholder="请输入营业执照号"/>
-                    </FormItem>
-                    <${FormItem} label="营业执照注册地址"
-                                 name="businessLicenseAddress"
-                                 rules=${[{ required: true, message: '请输入营业执照注册地址', }]}>
-                        <${Input} placeholder="请输入营业执照注册地址"/>
-                    </FormItem>
-                    <${FormItem} label="营业执照有效期" required>
-                        <${Space}>
-                            <${FormItem} label="营业执照有效期"
-                                         noStyle
-                                         rules=${[{ required: true, message: '请输入营业执照有效期', }]}
-                                         name="businessLicensePeriod">
-                                <${RangePicker} allowEmpty=${[false, true]}/>
-                            </FormItem>
-                            <${Checkbox}>长期</Checkbox>
-                        </Space>
-                    </FormItem>
-                    <${FormItem} label="法人身份证照片"
-                                 name="legalPersonIdPhoto"
-                                 required>
+
+                    ${['individualMerchants', 'enterpriseMerchant'].includes(merchantType) && html`
+                        <${FormItem} label="营业执照号"
+                                     name="businessLicenseNo"
+                                     rules=${[{ required: true, message: '请输入营业执照号', }]}>
+                            <${Input} placeholder="请输入营业执照号"/>
+                        </FormItem>
+                        <${FormItem} label="营业执照注册地址"
+                                     name="businessLicenseAddress"
+                                     rules=${[{ required: true, message: '请输入营业执照注册地址', }]}>
+                            <${Input} placeholder="请输入营业执照注册地址"/>
+                        </FormItem>
+                        <${FormItem} label="营业执照有效期" name="businessLicensePeriod"
+                                     rules=${[{ required: true, message: '请输入营业执照有效期', }]}
+                                     required>
+                            <${PeriodInput}/>
+                        </FormItem>
+                    `}
+
+                    ${'smallMerchants' === merchantType && html`
+                        <${FormItem} label="手持身份证照片"
+                                     name="holdingIdPhoto"
+                                     rules=${[{ required: true, message: '请上传手持身份证照片', }]}>
+                            <${PictureInput}/>
+                        </FormItem>
+                    `}
+
+                    <${FormItem} label="法人身份证照片" required>
                         <div class="inline-block">
                             <${FormItem} name=${['legalPersonIdPhoto', 'A']}
                                          noStyle
@@ -171,16 +194,24 @@ export default function BasicInfoForm(props) {
                             <div class="text-center color-gray-600">身份证国徽面</div>
                         </div>
                     </FormItem>
-                    <${FormItem} label="身份证有效期" required>
-                        <${Space}>
-                            <${FormItem} label="身份证有效期"
-                                         noStyle
-                                         rules=${[{ required: true, message: '请输入身份证有效期', }]}
-                                         name="idPeriod">
-                                <${RangePicker} allowEmpty=${[false, true]}/>
-                            </FormItem>
-                            <${Checkbox}>长期</Checkbox>
-                        </Space>
+
+                    <${FormItem} label="姓名"
+                                 name="name"
+                                 rules=${[{ required: true, message: '请输入姓名', }]}>
+                        <${Input} placeholder="请输入姓名"/>
+                    </FormItem>
+
+                    <${FormItem} label="身份证号"
+                                 name="idCardNumber"
+                                 rules=${[{ required: true, message: '请输入身份证号', }]}>
+                        <${Input} placeholder="请输入身份证号"/>
+                    </FormItem>
+
+                    <${FormItem} label="身份证有效期"
+                                 name="idPeriod"
+                                 rules=${[{ required: true, message: '请输入身份证有效期', }]}
+                                 required>
+                        <${PeriodInput}/>
                     </FormItem>
                     <${FormItem} label="行业类目"
                                  labelCol=${{ span: 4 }} wrapperCol=${{ span: 16 }}
@@ -192,16 +223,7 @@ export default function BasicInfoForm(props) {
                                  wrapperCol=${{ span: 16 }}
                                  name="businessAddress"
                                  rules=${[{ required: true, message: '请输入经营地址', }]}>
-                        <${Select} style=${{ width: '120px', marginRight: '8px', }} placeholder="请选择省">
-                            <${Option} value="shanghai">上海市</Option>
-                        </Select>
-                        <${Select} style=${{ width: '120px', marginRight: '8px', }} placeholder="请选择市">
-                            <${Option} value="shanghai">上海市</Option>
-                        </Select>
-                        <${Select} style=${{ width: '120px', marginRight: '8px', }} placeholder="请选择区/县">
-                            <${Option} value="shanghai">上海市</Option>
-                        </Select>
-                        <${Input} style=${{ width: '360px' }} placeholder="详细地址需超过5个字, 详细到门牌号"/>
+                        <${AddressInput}/>
                     </FormItem>
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>

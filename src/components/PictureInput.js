@@ -30,7 +30,6 @@ const _PictureInput = css`
   }
 `
 
-
 export default function PictureInput(props) {
 
     const value = props.value || undefined
@@ -44,8 +43,11 @@ export default function PictureInput(props) {
         accept: '.png,.jpg,.jpeg',
         maxCount: 1,
         listType: 'picture-card',
-        beforeUpload(ev) {
-            onChange(ev)
+        defaultFileList: [value].filter(it => !!it),
+        async beforeUpload(ev) {
+            const file = ev
+            file.thumbUrl = await getBase64(file)
+            onChange(file)
             return false
         },
         onRemove(ev) {
@@ -54,15 +56,12 @@ export default function PictureInput(props) {
         async onPreview(ev) {
             const file = ev
             if (!file.url && !file.preview) {
-                file.preview = await getBase64(file.originFileObj)
+                file.preview = await getBase64(file.originFileObj || file)
             }
             setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
             setPreviewImage(file.url || file.preview)
             setPreviewVisible(true)
-        }
-    }
-    if (value) {
-        uploadProps.defaultFileList = [value]
+        },
     }
 
     function handleCancelPreview() {

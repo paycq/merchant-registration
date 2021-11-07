@@ -7,18 +7,15 @@ import {
     Select,
     Space,
     Typography,
-    Modal,
-    Upload,
-    PlusOutlined,
     DatePicker,
-    Checkbox,
-    Cascader,
     Col,
     Row,
     Divider,
     Tooltip,
-    InfoCircleOutlined,
+    InfoCircleOutlined, useState,
 } from './modules.js'
+import PictureInput from './components/PictureInput.js'
+import PeriodInput from './components/PeriodInput.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -40,6 +37,14 @@ const _BillingInfoForm = css`
 
   & > .form {
     padding: 20px 0;
+
+    & > .ant-form-item:first-child {
+      color: #1890ff;
+
+      & label {
+        color: #1890ff;
+      }
+    }
   }
 
   & .ant-form-item-control-input-content > button.ant-btn {
@@ -57,15 +62,44 @@ const _BillingInfoForm = css`
     margin: 0 4px;
     font-size: 12px;
   }
+
+  & .photo-tip {
+    font-size: 14px;
+    color: #1890ff;
+    box-sizing: border-box;
+    height: 32px;
+    line-height: 32px;
+    margin-bottom: 4px;
+  }
 `
 
 export default function BillingInfoForm(props) {
+
+    const { state, dispatch } = props
+    const [form] = Form.useForm()
+
+    const [settler, setSettler] = useState(state.billingInfo.settlementType.settler)
+
+    function handleSelectLegalPersonSettlement(ev) {
+        const selectedSettler = form.getFieldValue('settlementType').settler
+        if (selectedSettler === settler) {
+            return
+        }
+        setSettler(selectedSettler)
+    }
+
     function handleFinish(ev) {
-        console.log('handleFinish', ev)
+        console.log('handleFinish', JSON.stringify(ev, null, 2))
+        dispatch({ type: 'updateBillingInfo', payload: ev, })
+        dispatch({ type: 'nextStep' })
     }
 
     function handleFinishFailed(ev) {
-        console.log('handleFinishFailed', ev)
+        console.log('handleFinishFailed', JSON.stringify(ev, null, 2))
+    }
+
+    function handleClickPreviousStep(ev) {
+        dispatch({ type: 'previousStep', })
     }
 
     const commonLayout = {
@@ -80,33 +114,88 @@ export default function BillingInfoForm(props) {
 
     return html`
         <${Form} name="account"
+                 form=${form}
                  onFinish=${handleFinish}
                  onFinishFailed=${handleFinishFailed}
+                 initialValues=${state.billingInfo}
                  ...${commonLayout}
                  autoComplete="off">
             <div class=${_BillingInfoForm}>
                 <div class="title color-gray-600">商户结算信息</div>
                 <div class="form">
+                    <${FormItem} label="注">请保持银行卡信息(证件号码、开户名、卡号)的正确性</FormItem>
                     <${FormItem} label="结算类型"
-                                 name="businessAddress"
-                                 rules=${[{ required: true, message: '请输入经营地址', }]}>
-                        <${Select} style=${{ width: '168px', marginRight: '8px', }} defaultValue="privateAccount">
-                            <${Option} value="privateAccount">对私账户</Option>
-                        </Select>
-                        <${Select} style=${{ width: '168px', marginRight: '8px', }} placeholder="请选择市"
-                                   defaultValue="legalPersonSettlement">
-                            <${Option} value="legalPersonSettlement">法人结算</Option>
-                        </Select>
+                                 required>
+                        <${Space}>
+                            <${FormItem} name=${['settlementType', 'accountType']}
+                                         noStyle
+                                         rules=${[{ required: true, message: '请选择结算类型' }]}>
+                                <${Select} style=${{ width: '168px', }}>
+                                    <${Option} value="privateAccount">对私账户</Option>
+                                </Select>
+                            </FormItem>
+                            <${FormItem} name=${['settlementType', 'settler']}
+                                         noStyle
+                                         rules=${[{ required: true, message: '请选择结算类型' }]}>
+                                <${Select} onChange=${handleSelectLegalPersonSettlement} style=${{ width: '168px', }}>
+                                    <${Option} value="legalPersonSettlement">法人结算</Option>
+                                    <${Option} value="notLegalPersonSettlement">非法人结算</Option>
+                                </Select>
+                            </FormItem>
+                        </Space>
                     </FormItem>
+                    ${settler === 'notLegalPersonSettlement' && html`
+                        <${FormItem} label="非法人授权书" required>
+                            <div class="photo-tip">
+                                <a target="_blank"
+                                   href="https://test-fshows-public.oss-cn-hangzhou.aliyuncs.com/merchant_open/not_legal_prove.pdf">
+                                    非法人授权书下载
+                                </a>
+                            </div>
+                            <${FormItem} noStyle name="notLegalPersonSettlerAuthorizationFile "
+                                         rules=${[{ required: true, message: '请上传非法人授权书' }]}>
+                                <${PictureInput} class="inline-block vertical-top"/>
+                            </FormItem>
+                        </FormItem>
+                        <${FormItem} label="结算人身份证照片" required>
+                            <div class="inline-block">
+                                <${FormItem} name=${['settlerIdPhoto', 'A']}
+                                             noStyle
+                                             rules=${[{ required: true, message: '请上传身份证人像面' }]}>
+                                    <${PictureInput}/>
+                                </FormItem>
+                                <div class="text-center color-gray-600">身份证人像面</div>
+                            </div>
+                            <div class="inline-block">
+                                <${FormItem} name=${['settlerIdPhoto', 'B']}
+                                             noStyle
+                                             rules=${[{ required: true, message: '请上传身份证国徽面' }]}>
+                                    <${PictureInput}/>
+                                </FormItem>
+                                <div class="text-center color-gray-600">身份证国徽面</div>
+                            </div>
+                        </FormItem>
+                        <${FormItem} label="结算人姓名"
+                                     name="settlerName"
+                                     rules=${[{ required: true, message: '请输入结算人姓名', }]}>
+                            <${Input} placeholder="请输入结算人姓名"/>
+                        </FormItem>
+                        <${FormItem} label="身份证号"
+                                     name="settlerIdCardNumber"
+                                     rules=${[{ required: true, message: '请输入身份证号', }]}>
+                            <${Input} placeholder="请输入身份证号"/>
+                        </FormItem>
+                        <${FormItem} label="身份证有效期"
+                                     name="SettlerIdPeriod"
+                                     rules=${[{ required: true, message: '请输入身份证有效期', }]}
+                                     required>
+                            <${PeriodInput}/>
+                        </FormItem>
+                    `}
                     <${FormItem} label="银行卡照片"
                                  name="bankCardPhoto"
-                                 rules=${[{ required: true, message: '请输入登陆账号', }]}>
-                        <${Upload} listType="picture-card">
-                            <div>
-                                <${PlusOutlined}/>
-                                <div style=${{ marginTop: 8 }}>上传</div>
-                            </div>
-                        </Upload>
+                                 rules=${[{ required: true, message: '请上传银行卡照片', }]}>
+                        <${PictureInput}/>
                     </FormItem>
                     <${FormItem} label="银行卡号"
                                  name="bankCardNumber"
@@ -117,7 +206,7 @@ export default function BillingInfoForm(props) {
                                  name="bank"
                                  rules=${[{ required: true, message: '请选择所属银行', }]}>
                         <${Select} placeholder="请选择所属银行">
-                            <${Option} value="a">银行A</Option>
+                            <${Option} value="bankA">银行A</Option>
                         </Select>
                     </FormItem>
                 </div>
@@ -127,32 +216,40 @@ export default function BillingInfoForm(props) {
                 <div class="form">
                     <${Row} gutter=${16}>
                         <${Col} className="gutter-row" span=${8}>
-                        <${FormItem} name="cardRate"
-                                     label="微信费率"
+                        <${FormItem} label="微信费率"
                                      ...${rateLayout}
-                                     extra="请设置2.50 ~ 100.00的值"
-                                     rules=${[{ required: true }]}>
-                            <${Input} defaultValue="3.8" style=${{ width: '50%', }}/>
+                                     extra="请设置2.50 ~ 100.00的值">
+                            <${FormItem} name="wechatPayRate"
+                                         noStyle
+                                         rules=${[{ required: true }]}>
+                                <${Input} style=${{ width: '50%', }}/>
+                            </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
                         <${Col} className="gutter-row" span=${8}>
-                        <${FormItem} name="cardRate"
-                                     label="支付宝费率"
+                        <${FormItem} label="支付宝费率"
                                      ...${rateLayout}
                                      extra="请设置2.50 ~ 100.00的值"
                                      rules=${[{ required: true }]}>
-                            <${Input} defaultValue="3.8" style=${{ width: '50%', }}/>
+                            <${FormItem} name="alipayRate"
+                                         noStyle
+                                         rules=${[{ required: true }]}>
+                                <${Input} style=${{ width: '50%', }}/>
+                            </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
                         <${Col} className="gutter-row" span=${8}>
-                        <${FormItem} name="cardRate"
-                                     label="银联费率"
+                        <${FormItem} label="银联费率"
                                      ...${rateLayout}
                                      extra="请设置2.50 ~ 100.00的值"
                                      rules=${[{ required: true }]}>
-                            <${Input} defaultValue="3.8" style=${{ width: '50%', }}/>
+                            <${FormItem} name="unionPayRate"
+                                         noStyle
+                                         rules=${[{ required: true }]}>
+                                <${Input} style=${{ width: '50%', }}/>
+                            </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
@@ -162,22 +259,29 @@ export default function BillingInfoForm(props) {
                     </Divider>
                     <${Row} gutter=${16}>
                         <${Col} className="gutter-row" span=${8}>
-                        <${FormItem} name="cardRate"
-                                     label="借记卡费率"
+                        <${FormItem} label="借记卡费率"
                                      ...${rateLayout}
                                      extra="请设置4.20 ~ 50.00的值"
                                      rules=${[{ required: true }]}>
-                            <${Input} defaultValue="4.20" style=${{ width: '50%', }}/>
+                            <${FormItem} name="cardRate"
+                                         noStyle
+                                         rules=${[{ required: true }]}>
+                                <${Input} style=${{ width: '50%', }}/>
+                            </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
                         <${Col} className="gutter-row" span=${8}>
-                        <${FormItem} name="cardRate"
+                        <${FormItem} name="cappedFee"
                                      label="封顶手续费"
                                      ...${rateLayout}
                                      extra="请设置18 ~ 500的值"
                                      rules=${[{ required: true }]}>
-                            <${Input} defaultValue="18" style=${{ width: '50%', }}/>
+                            <${FormItem} name="cappedFee"
+                                         noStyle
+                                         rules=${[{ required: true }]}>
+                                <${Input} style=${{ width: '50%', }}/>
+                            </FormItem>
                             <span class="unit-tip">元</span>
                             <${Tooltip} title="若封顶设置为18元代理商则可能无返佣，建议封顶金额设置大于18元">
                                 <${InfoCircleOutlined}/>
@@ -185,12 +289,16 @@ export default function BillingInfoForm(props) {
                         </FormItem>
                         </Col>
                         <${Col} className="gutter-row" span=${8}>
-                        <${FormItem} name="cardRate"
+                        <${FormItem} name="creditCardRate"
                                      label="贷记卡费率"
                                      ...${rateLayout}
                                      extra="请设置5.20 ~ 50.00的值"
                                      rules=${[{ required: true }]}>
-                            <${Input} defaultValue="5.20" style=${{ width: '50%', }}/>
+                            <${FormItem} name="creditCardRate"
+                                         noStyle
+                                         rules=${[{ required: true }]}>
+                                <${Input} style=${{ width: '50%', }}/>
+                            </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
                         </Col>
@@ -200,7 +308,7 @@ export default function BillingInfoForm(props) {
                         <${Button} htmlType="button">
                             返回
                         </Button>
-                        <${Button} htmlType="button">
+                        <${Button} onClick=${handleClickPreviousStep} htmlType="button">
                             上一步
                         </Button>
                         <${Button} type=${'primary'} htmlType="submit">
