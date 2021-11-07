@@ -16,6 +16,7 @@ import {
 } from './modules.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
+import bankList from './data/bank_list.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -205,8 +206,15 @@ export default function BillingInfoForm(props) {
                     <${FormItem} label="所属银行"
                                  name="bank"
                                  rules=${[{ required: true, message: '请选择所属银行', }]}>
-                        <${Select} placeholder="请选择所属银行">
-                            <${Option} value="bankA">银行A</Option>
+                        <${Select} showSearch
+                                   optionFilterProp="children"
+                                   filterOption=${(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                                   placeholder="请选择所属银行">
+                            ${bankList.map(it => {
+                                return html`
+                                    <${Option} value=${it.bankNo}>${it.bankName}</Option>
+                                `
+                            })}
                         </Select>
                     </FormItem>
                 </div>

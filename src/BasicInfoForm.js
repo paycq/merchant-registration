@@ -11,7 +11,7 @@ import {
     DatePicker,
     Cascader, useState,
 } from './modules.js'
-import { industryCategoryOptions } from './industry_category.js'
+import industryCategoryList from './data/industry_category_list.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import AddressInput from './components/AddressInput.js'
@@ -217,7 +217,7 @@ export default function BasicInfoForm(props) {
                                  labelCol=${{ span: 4 }} wrapperCol=${{ span: 16 }}
                                  name="industryCategory"
                                  rules=${[{ required: true, message: '请输入行业类目', }]}>
-                        <${Cascader} options=${industryCategoryOptions} placeholder="请输入行业类目"/>
+                        <${Cascader} options=${industryCategoryList} placeholder="请输入行业类目"/>
                     </FormItem>
                     <${FormItem} label="经营地址"
                                  wrapperCol=${{ span: 16 }}

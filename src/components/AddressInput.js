@@ -27,6 +27,7 @@ export default function AddressInput(props) {
             <${Select} onChange=${handleChange0} value=${value[0]}
                        style=${{ width: '120px', }} placeholder="请选择省">
                 <${Option} value="shanghai">上海市</Option>
+                <${Option} value="zhejiang">浙江省</Option>
             </Select>
             <${Select} onChange=${handleChange1} value=${value[1]} style=${{ width: '120px', }}
                        placeholder="请选择市">

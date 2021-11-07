@@ -49,7 +49,7 @@ const initialState = {
         },
         bankCardPhoto: undefined,                                           // 银行卡照片
         bankCardNumber: '1010101',                                          // 银行卡号
-        bank: 'bankA',                                                      // 所属银行
+        bank: undefined,                                                    // 所属银行
         // rate
         wechatPayRate: '3.8',                                               // 微信费率
         alipayRate: '3.8',                                                  // 支付宝费率

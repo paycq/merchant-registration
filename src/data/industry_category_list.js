@@ -1,7 +1,7 @@
 /**
  * 行业类目
  */
-export const industryCategoryOptions = [
+export default [
     {
         value: 1,
         label: '餐饮',
