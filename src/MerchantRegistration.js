@@ -1,4 +1,4 @@
-import { css, html, moment, useReducer } from './modules.js'
+import { css, cx, html, moment, useReducer } from './modules.js'
 import StepContent from './StepContent.js'
 import AccountInfoForm from './AccountInfoForm.js'
 import BasicInfoForm from './BasicInfoForm.js'
@@ -25,22 +25,22 @@ const initialState = {
     step: 0,
     // form data
     accountInfo: {
-        ownership: 'salute',                     // 所属授理商
-        registrationMobile: '13000000000',       // 注册手机
-        loginAccount: '13000000000',             // 登陆账号
+        ownership: undefined,                     // 所属授理商
+        registrationMobile: undefined,           // 注册手机
+        loginAccount: undefined,             // 登陆账号
     },
     basicInfo: {
         merchantType: 'individualMerchants',                                // 商户类型
-        merchantAbbreviation: '测试商户简称',                                 // 商户简称
+        merchantAbbreviation: undefined,                                 // 商户简称
         businessLicense: undefined,                                         // 营业执照
-        companyName: '测试公司名称',                                          // 公司名称
-        businessLicenseNo: '911101083066224948',                            // 营业执照号
-        businessLicenseAddress: '测试营业执照注册地址',                        // 营业执照注册地址
-        businessLicensePeriod: { period: [moment()], longTerm: true },      // 营业执照有效期
+        companyName: undefined,                                          // 公司名称
+        businessLicenseNo: undefined,                            // 营业执照号
+        businessLicenseAddress: undefined,                        // 营业执照注册地址
+        businessLicensePeriod: undefined,                   // 营业执照有效期
         legalPersonIdPhoto: undefined,                                      // 法人身份证照片
-        idPeriod: { period: [moment()], longTerm: true },                   // 身份证有效期
+        idPeriod: undefined,                                     // 身份证有效期
         industryCategory: [1, 12],                                          // 行业类目
-        businessAddress: ['shanghai', 'shanghai', 'shanghai', '上海某地'],   // 经营地址
+        businessAddress: undefined,                           // 经营地址
     },
     billingInfo: {
         settlementType: {                                                   // 结算类型
@@ -48,7 +48,7 @@ const initialState = {
             settler: 'legalPersonSettlement',                               // 法人结算
         },
         bankCardPhoto: undefined,                                           // 银行卡照片
-        bankCardNumber: '1010101',                                          // 银行卡号
+        bankCardNumber: undefined,                                          // 银行卡号
         bank: undefined,                                                    // 所属银行
         // rate
         wechatPayRate: '3.8',                                               // 微信费率
@@ -60,8 +60,8 @@ const initialState = {
 
     },
     storeInfo: {
-        storeName: '测试商店名称',               // 门店名称
-        storePhone: '13000000000',             // 门店电话
+        storeName: undefined,               // 门店名称
+        storePhone: undefined,             // 门店电话
         // photos
         storeFrontPhoto: undefined,            // 门店门头照
         payBoardPhoto: undefined,              // 收银台照片
@@ -110,7 +110,6 @@ function reducer(state, action) {
 }
 
 const _App = css`
-  padding: 20px;
   background-color: #f4f4f4;
 `
 
@@ -121,7 +120,7 @@ export default function MerchantRegistration(props) {
     const InputForm = getFormByStep(state.step)
 
     return html`
-        <div class=${_App}>
+        <div class=${cx(_App, 'application-container')}>
             <div class="container">
                 <${StepContent} state=${state}></StepContent>
                 <${InputForm} state=${state} dispatch=${dispatch}></InputForm>

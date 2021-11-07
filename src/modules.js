@@ -1,6 +1,6 @@
 export const { css, cx, injectGlobal } = window['emotion']
 export const moment = window['moment']
-export const { createElement, useState, useReducer } = window['React']
+export const { createElement, useState, useReducer, useCallback } = window['React']
 export const { render } = window['ReactDOM']
 
 const htm = window['htm']
@@ -30,5 +30,6 @@ export const {
     Col,
     Divider,
     Tooltip,
+    message,
 } = window['antd']
 

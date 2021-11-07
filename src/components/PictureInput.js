@@ -1,4 +1,5 @@
 import { css, cx, html, Modal, PlusOutlined, Upload, useState } from '../modules.js'
+import { uploadImage } from '../apis/upload.js'
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {

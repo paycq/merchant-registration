@@ -1,15 +1,21 @@
-import { html, Input, Select, Space } from '../modules.js'
+import { html, Input, Select, Space, useState, useCallback } from '../modules.js'
+import { searchCity, searchDistrict, searchProvince } from '../apis/geo.js'
+import { debounce } from '../utils/schedules.js'
 
 export default function AddressInput(props) {
     const value = props.value || []
     const onChange = props.onChange || (() => undefined)
 
+    const [option0, setOption0] = useState([])
+    const [option1, setOption1] = useState([])
+    const [option2, setOption2] = useState([])
+
     function handleChange0(ev) {
-        onChange([ev, value[1], value[2], value[3]])
+        onChange([ev, undefined, undefined, value[3]])
     }
 
     function handleChange1(ev) {
-        onChange([value[0], ev, value[2], value[3]])
+        onChange([value[0], ev, undefined, value[3]])
 
     }
 
@@ -22,20 +28,74 @@ export default function AddressInput(props) {
         onChange([value[0], value[1], value[2], val])
     }
 
+    const handleSearch0 = useCallback(debounce(async (ev) => {
+        const data = await searchProvince(ev || '')
+        setOption0(data)
+    }, 500))
+
+    const handleSearch1 = useCallback(debounce(async (ev) => {
+        const data = await searchCity(ev || '', value[0])
+        setOption1(data)
+    }, 500))
+
+    const handleSearch2 = useCallback(debounce(async (ev) => {
+        const data = await searchDistrict(ev || '', value[1])
+        setOption2(data)
+    }, 500))
+
     return html`
         <${Space}>
-            <${Select} onChange=${handleChange0} value=${value[0]}
-                       style=${{ width: '120px', }} placeholder="请选择省">
-                <${Option} value="shanghai">上海市</Option>
-                <${Option} value="zhejiang">浙江省</Option>
+            <${Select} showSearch
+                       value=${value[0]}
+                       onFocus=${() => handleSearch0()}
+                       onSearch=${handleSearch0}
+                       onChange=${handleChange0}
+                       defaultActiveFirstOption=${false}
+                       showArrow=${false}
+                       filterOption=${false}
+                       style=${{ width: '120px', }}
+                       notFoundContent=${null}
+                       placeholder="请选择省">
+                ${option0.map(it => {
+                    return html`
+                        <${Option} key=${it.code} value=${it.code}>${it.name}</Option>
+                    `
+                })}
             </Select>
-            <${Select} onChange=${handleChange1} value=${value[1]} style=${{ width: '120px', }}
-                       placeholder="请选择市">
-                <${Option} value="shanghai">上海市</Option>
+            <${Select}
+                    showSearch
+                    value=${value[1]}
+                    onFocus=${() => handleSearch1()}
+                    onSearch=${handleSearch1}
+                    onChange=${handleChange1}
+                    defaultActiveFirstOption=${false}
+                    showArrow=${false}
+                    filterOption=${false}
+                    style=${{ width: '120px', }}
+                    notFoundContent=${null}
+                    placeholder="请选择市">
+                ${option1.map(it => {
+                    return html`
+                        <${Option} key=${it.code} value=${it.code}>${it.name}</Option>
+                    `
+                })}
             </Select>
-            <${Select} onChange=${handleChange2} value=${value[2]} style=${{ width: '120px', }}
+            <${Select} showSearch
+                       value=${value[2]}
+                       onFocus=${() => handleSearch2()}
+                       onSearch=${handleSearch2}
+                       onChange=${handleChange2}
+                       defaultActiveFirstOption=${false}
+                       showArrow=${false}
+                       filterOption=${false}
+                       style=${{ width: '120px', }}
+                       notFoundContent=${null}
                        placeholder="请选择区/县">
-                <${Option} value="shanghai">上海市</Option>
+                ${option2.map(it => {
+                    return html`
+                        <${Option} key=${it.code} value=${it.code}>${it.name}</Option>
+                    `
+                })}
             </Select>
             <${Input} onChange=${handleChange3} value=${value[3]} style=${{ width: '360px' }}
                       placeholder="详细地址需超过5个字, 详细到门牌号"/>
