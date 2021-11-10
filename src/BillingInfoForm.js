@@ -135,15 +135,16 @@ export default function BillingInfoForm(props) {
                                          noStyle
                                          rules=${[{ required: true, message: '请选择结算类型' }]}>
                                 <${Select} style=${{ width: '168px', }}>
-                                    <${Option} value="privateAccount">对私账户</Option>
+                                    <${Option} value="1">对私账户</Option>
+                                    <${Option} value="2">对公账户</Option>
                                 </Select>
                             </FormItem>
                             <${FormItem} name=${['settlementType', 'settler']}
                                          noStyle
                                          rules=${[{ required: true, message: '请选择结算类型' }]}>
                                 <${Select} onChange=${handleSelectLegalPersonSettlement} style=${{ width: '168px', }}>
-                                    <${Option} value="legalPersonSettlement">法人结算</Option>
-                                    <${Option} value="notLegalPersonSettlement">非法人结算</Option>
+                                    <${Option} value="1">法人结算</Option>
+                                    <${Option} value="0">非法人结算</Option>
                                 </Select>
                             </FormItem>
                         </Space>
@@ -190,8 +191,11 @@ export default function BillingInfoForm(props) {
                             <${Input} placeholder="请输入身份证号"/>
                         </FormItem>
                         <${FormItem} label="身份证有效期"
-                                     name="SettlerIdPeriod"
-                                     rules=${[{ required: true, message: '请输入身份证有效期', }]}
+                                     name="settlerIdPeriod"
+                                     rules=${[
+                                         { required: true, message: '请输入身份证有效期', },
+                                         { validator: PeriodInput.validator, },
+                                     ]}
                                      required>
                             <${PeriodInput}/>
                         </FormItem>

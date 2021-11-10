@@ -45,3 +45,15 @@ export default function PeriodInput(props) {
         </Space>
     `
 }
+
+PeriodInput.validator = async (rule, value) => {
+    if (value) {
+        const { period, longTerm } = value
+        if (!period[0]) {
+            throw new Error('请输入开始日期')
+        }
+        if (!period[1] && !longTerm) {
+            throw new Error('请输入结束日期或勾选长期')
+        }
+    }
+}

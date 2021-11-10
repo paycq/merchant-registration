@@ -23,10 +23,11 @@ export async function uploadImage(file) {
     }
 }
 
-export async function uploadIdCard(file) {
+export async function uploadIdCard(file, idCardSide) {
     const formData = new FormData()
     formData.append('action', 'uploadCard')
     formData.append('url', '/home/xiaowei')
+    formData.append('idCardSide', idCardSide)
     formData.append('file', file)
     try {
         const response = await fetch(API, {

@@ -3,7 +3,7 @@ import {
     html,
     Button,
     Form,
-    Input,
+    Input, useState,
 } from './modules.js'
 import PhotoSample from './components/PhotoSample.js'
 import PictureInput from './components/PictureInput.js'
@@ -51,15 +51,20 @@ const _BillingInfoForm = css`
 export default function StoreInfoForm(props) {
 
     const { state, dispatch } = props
+    const [submitting, setSubmitting] = useState(false)
 
     async function handleFinish(ev) {
+        setSubmitting(true)
         dispatch({ type: 'updateStoreInfo', payload: ev, })
-        await submit({
-            ...state,
-            storeInfo: ev,
-        })
-        dispatch({ type: 'nextStep' })
-
+        try {
+            await submit({
+                ...state,
+                storeInfo: ev,
+            })
+            dispatch({ type: 'nextStep' })
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     function handleFinishFailed(ev) {
@@ -99,7 +104,7 @@ export default function StoreInfoForm(props) {
                                  rules=${[{ required: true, message: '请输入门店电话', }]}>
                         <${Input} placeholder="请输入门店电话"/>
                     </FormItem>
-                    <${FormItem} label="门店门头照">
+                    <${FormItem} label="门店门头照" required>
                         <div class="photo-tip">门店门头招牌信息可见，图片大小不超过2M</div>
                         <${FormItem} noStyle name="storeFrontPhoto"
                                      rules=${[{ required: true, message: '上传门店门头照', }]}>
@@ -110,7 +115,7 @@ export default function StoreInfoForm(props) {
                                             imageUrl=${new URL('./images/store_door_example.png', import.meta.url)}/>
                         </div>
                     </FormItem>
-                    <${FormItem} label="收银台照片">
+                    <${FormItem} label="收银台照片" required>
                         <div class="photo-tip">收银台需展示商家收银柜台和收款机，图片大小不超过2M</div>
                         <${FormItem} noStyle name="payBoardPhoto"
                                      rules=${[{ required: true, message: '请上传收银台照片', }]}>
@@ -121,7 +126,7 @@ export default function StoreInfoForm(props) {
                                             imageUrl=${new URL('./images/pay_board_example.png', import.meta.url)}/>
                         </div>
                     </FormItem>
-                    <${FormItem} label="店内环境照">
+                    <${FormItem} label="店内环境照" required>
                         <div class="photo-tip">店内照片需清晰可见，包括但不限于桌子、餐具等，图片大小不超过2M</div>
                         <${FormItem} noStyle name="storeEnvironmentPhoto"
                                      rules=${[{ required: true, message: '请上传店内环境照', }]}>
@@ -161,7 +166,7 @@ export default function StoreInfoForm(props) {
                         <${Button} onClick=${handleClickPreviousStep} htmlType="button">
                             上一步
                         </Button>
-                        <${Button} type=${'primary'} htmlType="submit">
+                        <${Button} loading=${submitting} type=${'primary'} htmlType="submit">
                             提交审核
                         </Button>
                     </FormItem>

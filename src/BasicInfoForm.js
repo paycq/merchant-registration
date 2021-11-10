@@ -1,6 +1,7 @@
 import {
     css,
     html,
+    moment,
     Button,
     Form,
     Input,
@@ -88,9 +89,28 @@ export default function BasicInfoForm(props) {
         showMerchantAbbreviation()
     }
 
-    async function handleInputIdCard(file) {
-        const result = await uploadIdCard(file)
-        console.log(result)
+    async function handleInputIdCardA(file) {
+        const result = await uploadIdCard(file, 'front') || {}
+        const data = result.data || {}
+        if (data.idcard) {
+            form.setFieldsValue({ idCardNumber: data.idcard })
+        }
+        if (data.name) {
+            form.setFieldsValue({ name: data.name })
+        }
+    }
+
+    async function handleInputIdCardB(file) {
+        const result = await uploadIdCard(file, 'back') || {}
+        const data = result.data || {}
+        if (data.qianfa && data.shixiao) {
+            form.setFieldsValue({
+                idPeriod: {
+                    period: [moment(data.qianfa), moment(data.shixiao)],
+                    longTerm: false,
+                }
+            })
+        }
     }
 
     function handleClickPreviousStep(ev) {
@@ -116,13 +136,13 @@ export default function BasicInfoForm(props) {
                     <${FormItem} label="商户类型"
                                  name="merchantType"
                                  rules=${[{ required: true, message: '请选择商户类型', }]}>
-                        <${Select} onChange=${handleSelectMerchantType}>
-                            <${Option} value="individualMerchants">个体商户</Option>
-                            <${Option} value="enterpriseMerchant">企业商户</Option>
-                            <${Option} value="smallMerchants">小微商户</Option>
+                        <${Select} onChange=${handleSelectMerchantType} placeholder="请选择商户类型">
+                            <${Option} value="2">个体商户</Option>
+                            <${Option} value="3">企业商户</Option>
+                            <${Option} value="1">小微商户</Option>
                         </Select>
                     </FormItem>
-                    <${FormItem} label="商户简称">
+                    <${FormItem} label="商户简称" required>
                         <${Space}>
                             <${FormItem} name="merchantAbbreviation"
                                          noStyle
@@ -170,7 +190,10 @@ export default function BasicInfoForm(props) {
                             <${Input} placeholder="请输入营业执照注册地址"/>
                         </FormItem>
                         <${FormItem} label="营业执照有效期" name="businessLicensePeriod"
-                                     rules=${[{ required: true, message: '请输入营业执照有效期', },]}
+                                     rules=${[
+                                         { required: true, message: '请输入营业执照有效期', },
+                                         { validator: PeriodInput.validator, },
+                                     ]}
                                      required>
                             <${PeriodInput}/>
                         </FormItem>
@@ -189,7 +212,7 @@ export default function BasicInfoForm(props) {
                             <${FormItem} name=${['legalPersonIdPhoto', 'A']}
                                          noStyle
                                          rules=${[{ required: true, message: '请上传身份证人像面' }]}>
-                                <${PictureInput} onFileInput=${handleInputIdCard}/>
+                                <${PictureInput} onFileInput=${handleInputIdCardA}/>
                             </FormItem>
                             <div class="text-center color-gray-600">身份证人像面</div>
                         </div>
@@ -197,7 +220,7 @@ export default function BasicInfoForm(props) {
                             <${FormItem} name=${['legalPersonIdPhoto', 'B']}
                                          noStyle
                                          rules=${[{ required: true, message: '请上传身份证国徽面' }]}>
-                                <${PictureInput}/>
+                                <${PictureInput} onFileInput=${handleInputIdCardB}/>
                             </FormItem>
                             <div class="text-center color-gray-600">身份证国徽面</div>
                         </div>
@@ -220,7 +243,10 @@ export default function BasicInfoForm(props) {
 
                     <${FormItem} label="身份证有效期"
                                  name="idPeriod"
-                                 rules=${[{ required: true, message: '请输入身份证有效期', }]}
+                                 rules=${[
+                                     { required: true, message: '请输入身份证有效期', },
+                                     { validator: PeriodInput.validator, },
+                                 ]}
                                  required>
                         <${PeriodInput}/>
                     </FormItem>

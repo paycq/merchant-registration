@@ -38,13 +38,13 @@ export async function searchProvince(s) {
     return data.filter(it => it.code.endsWith('0000'))
 }
 
-export async function searchCity(s, p) {
+export async function searchCity(s, p = '') {
     const data = await search(s) || []
     return data.filter(it => it.code.startsWith(p.substring(0, 2)) && it.code.endsWith('00'))
 
 }
 
-export async function searchDistrict(s, p) {
+export async function searchDistrict(s, p = '') {
     const data = await search(s) || []
     return data.filter(it => it.code.startsWith(p.substring(0, 2)) && !it.code.endsWith('00'))
 }

@@ -30,7 +30,7 @@ const initialState = {
         loginAccount: undefined,             // 登陆账号
     },
     basicInfo: {
-        merchantType: 'individualMerchants',                                // 商户类型
+        merchantType: undefined,                                // 商户类型
         merchantAbbreviation: undefined,                                 // 商户简称
         businessLicense: undefined,                                         // 营业执照
         companyName: undefined,                                          // 公司名称
@@ -41,15 +41,20 @@ const initialState = {
         idPeriod: undefined,                                     // 身份证有效期
         industryCategory: undefined,                                          // 行业类目
         businessAddress: undefined,                           // 经营地址
+        holdingIdPhoto: undefined,                               // 手持身份证照片
     },
     billingInfo: {
         settlementType: {                                                   // 结算类型
-            accountType: 'privateAccount',                                  // 对私账户
-            settler: 'legalPersonSettlement',                               // 法人结算
+            accountType: '1',                                  // 对私账户
+            settler: '1',                                        // 法人结算
         },
         bankCardPhoto: undefined,                                           // 银行卡照片
         bankCardNumber: undefined,                                          // 银行卡号
         bank: undefined,                                                    // 所属银行
+        //
+        settlerName: undefined,
+        settlerIdCardNumber: undefined,
+        settlerIdPhoto: undefined,
         // rate
         wechatPayRate: '3.8',                                               // 微信费率
         alipayRate: '3.8',                                                  // 支付宝费率
