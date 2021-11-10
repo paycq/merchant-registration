@@ -5,7 +5,7 @@ const API = '/home/xiaowei'
 
 function getParamsFromState(state) {
     const params = new URLSearchParams()
-    params.append('action', '')
+    params.append('action', 'applyV3')
     params.append('id', '')
     params.append('fid', '')
     params.append('base_info[merchant_type]', '')
