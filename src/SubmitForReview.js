@@ -24,10 +24,8 @@ const _SubmitForReview = css`
 
 export default function SubmitForReview(props) {
 
-    const { state, dispatch } = props
-
     function handleConfirm(ev) {
-        console.log('handleConfirm', JSON.stringify(state, null, 2))
+        window.location = '/home/xiaowei/list'
     }
 
     return html`

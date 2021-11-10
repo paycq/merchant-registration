@@ -45,7 +45,8 @@ function getParamsFromState(state) {
 }
 
 
-async function submit(state) {
+export async function submit(state) {
+    JSON.stringify(state, null, 2)
     try {
         const response = await fetch(API, {
             method: 'POST',

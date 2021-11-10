@@ -1,14 +1,5 @@
-import { css, cx, html, Modal, PlusOutlined, Upload, useState } from '../modules.js'
+import { css, cx, html, message, Modal, PlusOutlined, Upload, useState } from '../modules.js'
 import { uploadImage } from '../apis/upload.js'
-
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-    })
-}
 
 const _PictureInput = css`
 
@@ -45,22 +36,37 @@ export default function PictureInput(props) {
         maxCount: 1,
         listType: 'picture-card',
         defaultFileList: [value].filter(it => !!it),
-        async beforeUpload(ev) {
-            const file = ev
-            file.thumbUrl = await getBase64(file)
-            onChange(file)
-            return false
+        async customRequest(options) {
+            const { file, onSuccess, onError } = options
+            try {
+                const result = await uploadImage(file)
+                if (!result || result.status) {
+                    onError(new Error(result.message))
+                    return
+                }
+                message.info(result.message)
+                const url = `/uploads/xw/${result.url}.png`
+                onSuccess(url)
+                onChange({
+                    name: file.name,
+                    thumbUrl: url,
+                    url,
+                    originalFile: file,
+                })
+                if (typeof props.onFileInput === 'function') {
+                    await props.onFileInput(file)
+                }
+            } catch (err) {
+                onError(err)
+            }
         },
         onRemove(ev) {
             onChange()
         },
         async onPreview(ev) {
-            const file = ev
-            if (!file.url && !file.preview) {
-                file.preview = await getBase64(file.originFileObj || file)
-            }
-            setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
-            setPreviewImage(file.url || file.preview)
+            const file = value
+            setPreviewTitle(file.name)
+            setPreviewImage(file.url)
             setPreviewVisible(true)
         },
     }

@@ -90,7 +90,6 @@ export default function BillingInfoForm(props) {
     }
 
     function handleFinish(ev) {
-        console.log('handleFinish', JSON.stringify(ev, null, 2))
         dispatch({ type: 'updateBillingInfo', payload: ev, })
         dispatch({ type: 'nextStep' })
     }
@@ -101,6 +100,10 @@ export default function BillingInfoForm(props) {
 
     function handleClickPreviousStep(ev) {
         dispatch({ type: 'previousStep', })
+    }
+
+    function handleClickBack(ev) {
+        window.location = '/home/xiaowei/list'
     }
 
     const commonLayout = {
@@ -313,7 +316,7 @@ export default function BillingInfoForm(props) {
                     </Row>
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
-                        <${Button} htmlType="button">
+                        <${Button} onClick=${handleClickBack} htmlType="button">
                             返回
                         </Button>
                         <${Button} onClick=${handleClickPreviousStep} htmlType="button">

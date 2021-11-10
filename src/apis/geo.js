@@ -39,14 +39,12 @@ export async function searchProvince(s) {
 }
 
 export async function searchCity(s, p) {
-    console.log('searchCity', s, p)
     const data = await search(s) || []
     return data.filter(it => it.code.startsWith(p.substring(0, 2)) && it.code.endsWith('00'))
 
 }
 
 export async function searchDistrict(s, p) {
-    console.log('searchDistrict', s, p)
     const data = await search(s) || []
     return data.filter(it => it.code.startsWith(p.substring(0, 2)) && !it.code.endsWith('00'))
 }

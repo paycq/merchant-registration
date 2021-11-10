@@ -15,6 +15,7 @@ import industryCategoryList from './data/industry_category_list.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import AddressInput from './components/AddressInput.js'
+import { uploadIdCard } from './apis/upload.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -67,7 +68,6 @@ export default function BasicInfoForm(props) {
 
     function handleSelectMerchantType(ev) {
         const selectedMerchantType = form.getFieldValue('merchantType')
-        console.log(selectedMerchantType, merchantType)
         if (selectedMerchantType === merchantType) {
             return
         }
@@ -75,7 +75,6 @@ export default function BasicInfoForm(props) {
     }
 
     function handleFinish(ev) {
-        console.log('handleFinish', JSON.stringify(ev, null, 2))
         dispatch({ type: 'updateBasicInfo', payload: ev, })
         dispatch({ type: 'nextStep' })
     }
@@ -89,8 +88,17 @@ export default function BasicInfoForm(props) {
         showMerchantAbbreviation()
     }
 
+    async function handleInputIdCard(file) {
+        const result = await uploadIdCard(file)
+        console.log(result)
+    }
+
     function handleClickPreviousStep(ev) {
         dispatch({ type: 'previousStep', })
+    }
+
+    function handleClickBack(ev) {
+        window.location = '/home/xiaowei/list'
     }
 
     return html`
@@ -162,7 +170,7 @@ export default function BasicInfoForm(props) {
                             <${Input} placeholder="请输入营业执照注册地址"/>
                         </FormItem>
                         <${FormItem} label="营业执照有效期" name="businessLicensePeriod"
-                                     rules=${[{ required: true, message: '请输入营业执照有效期', }]}
+                                     rules=${[{ required: true, message: '请输入营业执照有效期', },]}
                                      required>
                             <${PeriodInput}/>
                         </FormItem>
@@ -181,7 +189,7 @@ export default function BasicInfoForm(props) {
                             <${FormItem} name=${['legalPersonIdPhoto', 'A']}
                                          noStyle
                                          rules=${[{ required: true, message: '请上传身份证人像面' }]}>
-                                <${PictureInput}/>
+                                <${PictureInput} onFileInput=${handleInputIdCard}/>
                             </FormItem>
                             <div class="text-center color-gray-600">身份证人像面</div>
                         </div>
@@ -203,7 +211,10 @@ export default function BasicInfoForm(props) {
 
                     <${FormItem} label="身份证号"
                                  name="idCardNumber"
-                                 rules=${[{ required: true, message: '请输入身份证号', }]}>
+                                 rules=${[
+                                     { required: true, message: '请输入身份证号', },
+                                     { pattern: /^\d{15}(\d\d\d)?$/, message: '请输入15/18为身份证件号', },
+                                 ]}>
                         <${Input} placeholder="请输入身份证号"/>
                     </FormItem>
 
@@ -222,12 +233,15 @@ export default function BasicInfoForm(props) {
                     <${FormItem} label="经营地址"
                                  wrapperCol=${{ span: 16 }}
                                  name="businessAddress"
-                                 rules=${[{ required: true, message: '请输入经营地址', }]}>
+                                 rules=${[
+                                     { required: true, message: '请输入经营地址', },
+                                     { validator: AddressInput.validator },
+                                 ]}>
                         <${AddressInput}/>
                     </FormItem>
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
-                        <${Button} htmlType="button">
+                        <${Button} onClick=${handleClickBack} htmlType="button">
                             返回
                         </Button>
                         <${Button} onClick=${handleClickPreviousStep} htmlType="button">

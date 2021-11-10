@@ -39,7 +39,7 @@ const initialState = {
         businessLicensePeriod: undefined,                   // 营业执照有效期
         legalPersonIdPhoto: undefined,                                      // 法人身份证照片
         idPeriod: undefined,                                     // 身份证有效期
-        industryCategory: [1, 12],                                          // 行业类目
+        industryCategory: undefined,                                          // 行业类目
         businessAddress: undefined,                           // 经营地址
     },
     billingInfo: {

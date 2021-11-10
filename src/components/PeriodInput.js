@@ -44,5 +44,4 @@ export default function PeriodInput(props) {
             <${Checkbox} checked=${value.longTerm} onChange=${handleLongTermChange}>长期</Checkbox>
         </Space>
     `
-
 }

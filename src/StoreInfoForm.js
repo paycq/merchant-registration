@@ -4,18 +4,12 @@ import {
     Button,
     Form,
     Input,
-    Select,
-    Typography,
-    DatePicker,
 } from './modules.js'
 import PhotoSample from './components/PhotoSample.js'
 import PictureInput from './components/PictureInput.js'
+import { submit } from './apis/submit.js'
 
-const { Option } = Select
 const { Item: FormItem } = Form
-const { Link } = Typography
-const { RangePicker } = DatePicker
-
 const _BillingInfoForm = css`
   background-color: #fff;
   margin-top: 20px;
@@ -58,10 +52,14 @@ export default function StoreInfoForm(props) {
 
     const { state, dispatch } = props
 
-    function handleFinish(ev) {
-        console.log('handleFinish', JSON.stringify(ev, null, 2))
+    async function handleFinish(ev) {
         dispatch({ type: 'updateStoreInfo', payload: ev, })
+        await submit({
+            ...state,
+            storeInfo: ev,
+        })
         dispatch({ type: 'nextStep' })
+
     }
 
     function handleFinishFailed(ev) {
@@ -72,14 +70,13 @@ export default function StoreInfoForm(props) {
         dispatch({ type: 'previousStep', })
     }
 
+    function handleClickBack(ev) {
+        window.location = '/home/xiaowei/list'
+    }
+
     const commonLayout = {
         labelCol: { span: 4 },
         wrapperCol: { span: 10 },
-    }
-
-    const rateLayout = {
-        labelCol: { span: 8 },
-        wrapperCol: { span: 16 },
     }
 
     return html`
@@ -158,7 +155,7 @@ export default function StoreInfoForm(props) {
 
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
-                        <${Button} htmlType="button">
+                        <${Button} onClick=${handleClickBack} htmlType="button">
                             返回
                         </Button>
                         <${Button} onClick=${handleClickPreviousStep} htmlType="button">

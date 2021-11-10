@@ -28,6 +28,7 @@ const _AccountInformationForm = css`
 
 export default function AccountInfoForm(props) {
     const { state, dispatch } = props
+    const [form] = Form.useForm()
 
     function handleFinish(ev) {
         dispatch({ type: 'updateAccountInfo', payload: ev, })
@@ -39,7 +40,15 @@ export default function AccountInfoForm(props) {
     }
 
     function handleClickBack(ev) {
-        console.log('handleClickBack')
+        window.location = '/home/xiaowei/list'
+    }
+
+    function handleLoginAccountFocus() {
+        const registrationMobile = form.getFieldValue('registrationMobile')
+        const loginAccount = form.getFieldValue('loginAccount')
+        if (registrationMobile && loginAccount === undefined) {
+            form.setFieldsValue({ loginAccount: registrationMobile })
+        }
     }
 
     return html`
@@ -50,6 +59,7 @@ export default function AccountInfoForm(props) {
                          onFinish=${handleFinish}
                          onFinishFailed=${handleFinishFailed}
                          initialValues=${state.accountInfo}
+                         form=${form}
                          labelCol=${{ span: 4 }}
                          wrapperCol=${{ span: 10 }}
                          autoComplete="off">
@@ -57,19 +67,22 @@ export default function AccountInfoForm(props) {
                                  name="ownership"
                                  rules=${[{ required: true, message: '请选择所属授理商', }]}>
                         <${Select} placeholder="请选择">
-                            <Option value="salute">salute(代理商)</Option>
+                            <Option value="1">安徽色鲁特网络科技有限公司</Option>
                         </Select>
                     </FormItem>
                     <${FormItem} label="注册手机"
                                  name="registrationMobile"
-                                 rules=${[{ required: true, message: '请输入注册手机', }]}>
+                                 rules=${[
+                                     { required: true, message: '请输入注册手机', },
+                                     { pattern: /^1[0-9]{10}$/, message: '请输入11位正确手机号', },
+                                 ]}>
                         <${Input} placeholder="11位正确手机号，用于登录账号密码找回"/>
                     </FormItem>
                     <${FormItem} label="登陆账号"
                                  name="loginAccount"
                                  extra="注：商户初始密码为注册手机号后6位"
                                  rules=${[{ required: true, message: '请输入登陆账号', }]}>
-                        <${Input} placeholder="建议使用手机号，支持2-50位数字/字母/中文" allowClear/>
+                        <${Input} onFocus=${handleLoginAccountFocus} placeholder="建议使用手机号，支持2-50位数字/字母/中文" allowClear/>
                     </FormItem>
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>

@@ -55,7 +55,7 @@ export default function AddressInput(props) {
                        filterOption=${false}
                        style=${{ width: '120px', }}
                        notFoundContent=${null}
-                       placeholder="请选择省">
+                       placeholder="请输入省">
                 ${option0.map(it => {
                     return html`
                         <${Option} key=${it.code} value=${it.code}>${it.name}</Option>
@@ -73,7 +73,7 @@ export default function AddressInput(props) {
                     filterOption=${false}
                     style=${{ width: '120px', }}
                     notFoundContent=${null}
-                    placeholder="请选择市">
+                    placeholder="请输入市">
                 ${option1.map(it => {
                     return html`
                         <${Option} key=${it.code} value=${it.code}>${it.name}</Option>
@@ -90,7 +90,7 @@ export default function AddressInput(props) {
                        filterOption=${false}
                        style=${{ width: '120px', }}
                        notFoundContent=${null}
-                       placeholder="请选择区/县">
+                       placeholder="请输入区/县">
                 ${option2.map(it => {
                     return html`
                         <${Option} key=${it.code} value=${it.code}>${it.name}</Option>
@@ -101,4 +101,21 @@ export default function AddressInput(props) {
                       placeholder="详细地址需超过5个字, 详细到门牌号"/>
         </Space>
     `
+}
+
+AddressInput.validator = async (rule, value) => {
+    if (value) {
+        if (!value[0]) {
+            throw new Error('请选择省')
+        }
+        if (!value[1]) {
+            throw new Error('请选择市')
+        }
+        if (!value[2]) {
+            throw new Error('请选择区县')
+        }
+        if (!value[3] || String(value[3]).length < 5) {
+            throw new Error('请输入详细地址，详细地址需超过5个字, 详细到门牌号')
+        }
+    }
 }
