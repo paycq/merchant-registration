@@ -67,6 +67,13 @@ export default function BasicInfoForm(props) {
 
     const [merchantType, setMerchantType] = useState(state.basicInfo.merchantType)
 
+    function handleLocationChange(location) {
+        dispatch({
+            type: 'setAddressLocation',
+            payload: location,
+        })
+    }
+
     function handleSelectMerchantType(ev) {
         const selectedMerchantType = form.getFieldValue('merchantType')
         if (selectedMerchantType === merchantType) {
@@ -263,7 +270,7 @@ export default function BasicInfoForm(props) {
                                      { required: true, message: '请输入经营地址', },
                                      { validator: AddressInput.validator },
                                  ]}>
-                        <${AddressInput}/>
+                        <${AddressInput} onLocationChange=${handleLocationChange}/>
                     </FormItem>
                     <!-- button -->
                     <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>

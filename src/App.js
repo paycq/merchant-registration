@@ -41,6 +41,7 @@ const initialState = {
         idPeriod: undefined,                                     // 身份证有效期
         industryCategory: undefined,                                          // 行业类目
         businessAddress: undefined,                           // 经营地址
+        addressLocation: [],                                    // 经纬度
         holdingIdPhoto: undefined,                               // 手持身份证照片
     },
     billingInfo: {
@@ -108,6 +109,14 @@ function reducer(state, action) {
             return {
                 ...state,
                 storeInfo: payload,
+            }
+        case 'setAddressLocation':
+            return {
+                ...state,
+                basicInfo: {
+                    ...state.basicInfo,
+                    addressLocation: payload,
+                }
             }
         default:
             return state
