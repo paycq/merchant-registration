@@ -149,7 +149,7 @@ export default function BillingInfoForm(props) {
                             </FormItem>
                         </Space>
                     </FormItem>
-                    ${settler === 'notLegalPersonSettlement' && html`
+                    ${settler === '0' && html`
                         <${FormItem} label="非法人授权书" required>
                             <div class="photo-tip">
                                 <a target="_blank"

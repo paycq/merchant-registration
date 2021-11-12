@@ -51,6 +51,7 @@ export default function PictureInput(props) {
                     name: file.name,
                     thumbUrl: url,
                     url,
+                    urlValue: result.url,
                     originalFile: file,
                 })
                 if (typeof props.onFileInput === 'function') {

@@ -281,6 +281,13 @@ export default function BasicInfoForm(props) {
                                  rules=${[{ required: true, message: '请输入行业类目', }]}>
                         <${Cascader} options=${industryCategoryList} placeholder="请输入行业类目"/>
                     </FormItem>
+
+                    <${FormItem} label="电子邮箱"
+                                 name="email"
+                                 rules=${[{ type: 'email', message: '请输入正确的邮箱', required: true },]}>
+                        <${Input} placeholder="请输入电子邮箱"/>
+                    </FormItem>
+
                     <${FormItem} label="经营地址"
                                  wrapperCol=${{ span: 16 }}
                                  name="businessAddress"

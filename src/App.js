@@ -31,6 +31,7 @@ const initialState = {
     },
     basicInfo: {
         merchantType: '2',                                // 商户类型
+        email: undefined,                                // 联系邮箱
         merchantAbbreviation: undefined,                                 // 商户简称
         businessLicense: undefined,                                         // 营业执照
         companyName: undefined,                                          // 公司名称
