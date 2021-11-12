@@ -30,7 +30,7 @@ const initialState = {
         loginAccount: undefined,             // 登陆账号
     },
     basicInfo: {
-        merchantType: undefined,                                // 商户类型
+        merchantType: '2',                                // 商户类型
         merchantAbbreviation: undefined,                                 // 商户简称
         businessLicense: undefined,                                         // 营业执照
         companyName: undefined,                                          // 公司名称

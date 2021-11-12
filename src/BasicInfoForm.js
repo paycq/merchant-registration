@@ -16,7 +16,7 @@ import industryCategoryList from './data/industry_category_list.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import AddressInput from './components/AddressInput.js'
-import { uploadIdCard } from './apis/upload.js'
+import { uploadIdCard, uploadLicense } from './apis/upload.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -107,6 +107,23 @@ export default function BasicInfoForm(props) {
         }
     }
 
+    async function handleInputBusinessLicense(file) {
+        const result = await uploadLicense(file) || {}
+        const data = result.data || {}
+        if (data.name) {
+            form.setFieldsValue({ companyName: data.name })
+
+        }
+        if (data.number) {
+            form.setFieldsValue({ businessLicenseNo: data.number })
+
+        }
+        if (data.address) {
+            form.setFieldsValue({ businessLicenseAddress: data.address })
+        }
+    }
+
+
     async function handleInputIdCardB(file) {
         const result = await uploadIdCard(file, 'back') || {}
         const data = result.data || {}
@@ -162,11 +179,12 @@ export default function BasicInfoForm(props) {
                         </Space>
                     </FormItem>
 
-                    ${['individualMerchants', 'enterpriseMerchant'].includes(merchantType) && html`
+
+                    ${['2', '3'].includes(merchantType) && html`
                         <${FormItem} label="营业执照"
                                      name="businessLicense"
                                      rules=${[{ required: true, message: '请上传营业执照', }]}>
-                            <${PictureInput}/>
+                            <${PictureInput} onFileInput=${handleInputBusinessLicense}/>
                         </FormItem>
                     `}
 
@@ -185,7 +203,7 @@ export default function BasicInfoForm(props) {
                         <${Input} placeholder="请输入公司名称"/>
                     </FormItem>
 
-                    ${['individualMerchants', 'enterpriseMerchant'].includes(merchantType) && html`
+                    ${['2', '3'].includes(merchantType) && html`
                         <${FormItem} label="营业执照号"
                                      name="businessLicenseNo"
                                      rules=${[{ required: true, message: '请输入营业执照号', }]}>
@@ -206,7 +224,7 @@ export default function BasicInfoForm(props) {
                         </FormItem>
                     `}
 
-                    ${'smallMerchants' === merchantType && html`
+                    ${'1' === merchantType && html`
                         <${FormItem} label="手持身份证照片"
                                      name="holdingIdPhoto"
                                      rules=${[{ required: true, message: '请上传手持身份证照片', }]}>
