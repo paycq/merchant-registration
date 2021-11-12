@@ -207,7 +207,10 @@ export default function BillingInfoForm(props) {
                     </FormItem>
                     <${FormItem} label="银行卡号"
                                  name="bankCardNumber"
-                                 rules=${[{ required: true, message: '请输入银行卡号', }]}>
+                                 rules=${[
+                                     { required: true, message: '请输入银行卡号', },
+                                     { pattern: /^[0-9]{12,19}$/, message: '请输入正确银行卡号', },
+                                 ]}>
                         <${Input} placeholder="请输入银行卡号"/>
                     </FormItem>
                     <${FormItem} label="所属银行"

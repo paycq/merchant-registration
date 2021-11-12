@@ -99,7 +99,10 @@ function reducer(state, action) {
         case 'updateBasicInfo':
             return {
                 ...state,
-                basicInfo: payload,
+                basicInfo: {
+                    ...state.basicInfo,
+                    ...payload,
+                },
             }
         case 'updateBillingInfo':
             return {

@@ -14,6 +14,7 @@ function getParamsFromState(state) {
     params.append('base_info[contact_phone]', state.accountInfo.registrationMobile)
     params.append('base_info[service_phone]', state.accountInfo.registrationMobile)
     params.append('base_info[email]', state.basicInfo.email)
+    params.append('base_info[unity_category_id]', state.basicInfo.industryCategory[1])
     params.append('shop_info[store_name]', state.storeInfo.storeName)
     params.append('shop_info[store_phone]', state.storeInfo.storePhone)
     params.append('address_info[province_code]', state.basicInfo.businessAddress[0])
@@ -35,11 +36,11 @@ function getParamsFromState(state) {
     params.append('account_info[account_type]', state.billingInfo.settlementType?.accountType)
     params.append('account_info[legal_flag]', state.billingInfo.settlementType?.settler)
     params.append('account_info[unionpay_code]', state.billingInfo.bank)
-    params.append('account_info[real_name]', state.billingInfo.settlerName)
-    params.append('account_info[id_card_no]', state.billingInfo.settlerIdCardNumber)
+    params.append('account_info[real_name]', state.billingInfo.settlerName || state.basicInfo.name)
+    params.append('account_info[id_card_no]', state.billingInfo.settlerIdCardNumber || state.basicInfo.idCardNumber)
     params.append('account_info[bank_card_no]', state.billingInfo.bankCardNumber)
-    params.append('account_info[id_card_front_photo]', state.billingInfo.settlerIdPhoto?.A?.urlValue || '')
-    params.append('account_info[id_card_back_photo]', state.billingInfo.settlerIdPhoto?.B?.urlValue || '')
+    params.append('account_info[id_card_front_photo]', state.billingInfo.settlerIdPhoto?.A?.urlValue || state.basicInfo.legalPersonIdPhoto.A?.urlValue || '')
+    params.append('account_info[id_card_back_photo]', state.billingInfo.settlerIdPhoto?.B?.urlValue || state.basicInfo.legalPersonIdPhoto.B?.urlValue || '')
     params.append('account_info[bank_card_photo]', state.billingInfo.bankCardPhoto?.urlValue || '')
     return params
 }
