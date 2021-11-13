@@ -6,22 +6,19 @@ import {
     Input,
     Select,
     Space,
-    Typography,
-    DatePicker,
     Col,
     Row,
     Divider,
     Tooltip,
-    InfoCircleOutlined, useState,
+    InfoCircleOutlined, useState, moment,
 } from './modules.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import bankList from './data/bank_list.js'
+import { uploadBankcard, uploadIdCard } from './apis/upload.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
-const { Link } = Typography
-const { RangePicker } = DatePicker
 
 const _BillingInfoForm = css`
   background-color: #fff;
@@ -106,6 +103,44 @@ export default function BillingInfoForm(props) {
         window.location = '/home/xiaowei/list'
     }
 
+    async function handleInputBankCard(file) {
+        const result = await uploadBankcard(file) || {}
+        const data = result.data || {}
+        if (data.bank_card_number) {
+            form.setFieldsValue({ bankCardNumber: String(data.bank_card_number).replace(/ /g, '') })
+        }
+        if (data.bank_name) {
+            const matchedBank  = bankList.find(it => it.bankName === String(data.bank_name).trim())
+            if(matchedBank){
+                form.setFieldsValue({ bank: matchedBank.bankNo })
+            }
+        }
+    }
+
+    async function handleInputIdCardA(file) {
+        const result = await uploadIdCard(file, 'front') || {}
+        const data = result.data || {}
+        if (data.name) {
+            form.setFieldsValue({ settlerName: data.name })
+        }
+        if (data.idcard) {
+            form.setFieldsValue({ settlerIdCardNumber: data.idcard })
+        }
+    }
+
+    async function handleInputIdCardB(file) {
+        const result = await uploadIdCard(file, 'back') || {}
+        const data = result.data || {}
+        if (data.qianfa && data.shixiao) {
+            form.setFieldsValue({
+                settlerIdPeriod: {
+                    period: [moment(data.qianfa), moment(data.shixiao)],
+                    longTerm: false,
+                }
+            })
+        }
+    }
+
     const commonLayout = {
         labelCol: { span: 4 },
         wrapperCol: { span: 10 },
@@ -167,7 +202,7 @@ export default function BillingInfoForm(props) {
                                 <${FormItem} name=${['settlerIdPhoto', 'A']}
                                              noStyle
                                              rules=${[{ required: true, message: '请上传身份证人像面' }]}>
-                                    <${PictureInput}/>
+                                    <${PictureInput} onFileInput=${handleInputIdCardA}/>
                                 </FormItem>
                                 <div class="text-center color-gray-600">身份证人像面</div>
                             </div>
@@ -175,7 +210,7 @@ export default function BillingInfoForm(props) {
                                 <${FormItem} name=${['settlerIdPhoto', 'B']}
                                              noStyle
                                              rules=${[{ required: true, message: '请上传身份证国徽面' }]}>
-                                    <${PictureInput}/>
+                                    <${PictureInput} onFileInput=${handleInputIdCardB}/>
                                 </FormItem>
                                 <div class="text-center color-gray-600">身份证国徽面</div>
                             </div>
@@ -203,7 +238,7 @@ export default function BillingInfoForm(props) {
                     <${FormItem} label="银行卡照片"
                                  name="bankCardPhoto"
                                  rules=${[{ required: true, message: '请上传银行卡照片', }]}>
-                        <${PictureInput}/>
+                        <${PictureInput} onFileInput=${handleInputBankCard}/>
                     </FormItem>
                     <${FormItem} label="银行卡号"
                                  name="bankCardNumber"

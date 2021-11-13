@@ -80,3 +80,30 @@ export async function uploadLicense(file) {
         message.error(err.message)
     }
 }
+
+
+/**
+ * 银行卡识别
+ *
+ * @param {File} file
+ * @returns {Promise<any>}
+ */
+export async function uploadBankcard(file) {
+    const formData = new FormData()
+    formData.append('action', 'uploadBankcard')
+    formData.append('url', '/home/xiaowei')
+    formData.append('file', file)
+    try {
+        const response = await fetch(API, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: formData,
+        })
+        return await response.json()
+    } catch (err) {
+        message.error(err.message)
+    }
+}

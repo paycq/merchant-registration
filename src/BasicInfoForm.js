@@ -9,7 +9,6 @@ import {
     Space,
     Typography,
     Modal,
-    DatePicker,
     Cascader, useState,
 } from './modules.js'
 import industryCategoryList from './data/industry_category_list.js'
@@ -17,11 +16,11 @@ import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import AddressInput from './components/AddressInput.js'
 import { uploadIdCard, uploadLicense } from './apis/upload.js'
+import { normalizeDate } from './utils/date.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
 const { Link } = Typography
-const { RangePicker } = DatePicker
 
 function showMerchantAbbreviation() {
     const imageUrl = new URL('./images/merchant_abbreviation_sample.png', import.meta.url)
@@ -107,6 +106,19 @@ export default function BasicInfoForm(props) {
         }
     }
 
+    async function handleInputIdCardB(file) {
+        const result = await uploadIdCard(file, 'back') || {}
+        const data = result.data || {}
+        if (data.qianfa && data.shixiao) {
+            form.setFieldsValue({
+                idPeriod: {
+                    period: [moment(data.qianfa), moment(data.shixiao)],
+                    longTerm: false,
+                }
+            })
+        }
+    }
+
     async function handleInputBusinessLicense(file) {
         const result = await uploadLicense(file) || {}
         const data = result.data || {}
@@ -121,19 +133,24 @@ export default function BasicInfoForm(props) {
         if (data.address) {
             form.setFieldsValue({ businessLicenseAddress: data.address })
         }
-    }
-
-
-    async function handleInputIdCardB(file) {
-        const result = await uploadIdCard(file, 'back') || {}
-        const data = result.data || {}
-        if (data.qianfa && data.shixiao) {
-            form.setFieldsValue({
-                idPeriod: {
-                    period: [moment(data.qianfa), moment(data.shixiao)],
-                    longTerm: false,
-                }
-            })
+        if (data.chengli && data.youxiao) {
+            const startDate = normalizeDate(data.chengli)
+            const endDate = normalizeDate(data.youxiao)
+            if (endDate) {
+                form.setFieldsValue({
+                    businessLicensePeriod: {
+                        period: [moment(startDate), moment(endDate)],
+                        longTerm: false,
+                    }
+                })
+            } else {
+                form.setFieldsValue({
+                    businessLicensePeriod: {
+                        period: [moment(startDate), undefined],
+                        longTerm: true,
+                    }
+                })
+            }
         }
     }
 
