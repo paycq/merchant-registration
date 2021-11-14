@@ -32,5 +32,6 @@ export const {
     Divider,
     Tooltip,
     message,
+    Radio,
 } = window['antd']
 

@@ -57,10 +57,12 @@ const initialState = {
         settlerName: undefined,
         settlerIdCardNumber: undefined,
         settlerIdPhoto: undefined,
+        branchBankNumber: undefined,
+        branchBankInfo: 'select',
         // rate
-        wechatPayRate: '3.8',                                               // 微信费率
-        alipayRate: '3.8',                                                  // 支付宝费率
-        unionPayRate: '3.8',                                                // 银联费率
+        wechatPayRate: '2.5',                                               // 微信费率
+        alipayRate: '2.5',                                                  // 支付宝费率
+        unionPayRate: '2.5',                                                // 银联费率
         cardRate: '4.20',                                                   // 借记卡费率
         cappedFee: '18',                                                    // 封顶手续费
         creditCardRate: '5.20',                                             // 贷记卡费率
@@ -120,6 +122,30 @@ function reducer(state, action) {
                 basicInfo: {
                     ...state.basicInfo,
                     addressLocation: payload,
+                }
+            }
+        case 'setMerchantType3':
+            if (payload === true) {
+                return {
+                    ...state,
+                    billingInfo: {
+                        ...state.billingInfo,
+                        settlementType: {
+                            ...state.billingInfo.settlementType,
+                            accountType: '2',
+                        },
+                    }
+                }
+            } else {
+                return {
+                    ...state,
+                    billingInfo: {
+                        ...state.billingInfo,
+                        settlementType: {
+                            ...state.billingInfo.settlementType,
+                            accountType: '1',
+                        },
+                    }
                 }
             }
         default:

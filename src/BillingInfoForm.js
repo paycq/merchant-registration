@@ -10,15 +10,17 @@ import {
     Row,
     Divider,
     Tooltip,
-    InfoCircleOutlined, useState, moment,
+    InfoCircleOutlined, useState, moment, Radio, Cascader,
 } from './modules.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import bankList from './data/bank_list.js'
 import { uploadBankcard, uploadIdCard } from './apis/upload.js'
+import branch_bank_area from './data/branch_bank_area.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
+const RadioGroup = Radio.Group
 
 const _BillingInfoForm = css`
   background-color: #fff;
@@ -110,8 +112,8 @@ export default function BillingInfoForm(props) {
             form.setFieldsValue({ bankCardNumber: String(data.bank_card_number).replace(/ /g, '') })
         }
         if (data.bank_name) {
-            const matchedBank  = bankList.find(it => it.bankName === String(data.bank_name).trim())
-            if(matchedBank){
+            const matchedBank = bankList.find(it => it.bankName === String(data.bank_name).trim())
+            if (matchedBank) {
                 form.setFieldsValue({ bank: matchedBank.bankNo })
             }
         }
@@ -151,6 +153,20 @@ export default function BillingInfoForm(props) {
         wrapperCol: { span: 16 },
     }
 
+    const isMerchantType3 = state.basicInfo.merchantType === '3'
+
+    const [isAccountType2, setIsAccountType2] = useState(state.billingInfo.settlementType.accountType === '2')
+
+    function handleAccountTypeChange(ev) {
+        setIsAccountType2(ev === '2')
+    }
+
+    const [branchBankInfoChange, setBranchBankInfoChange] = useState(state.billingInfo.branchBankInfo)
+
+    function handleBranchBankInfoChange(ev) {
+        setBranchBankInfoChange(ev.target.value)
+    }
+
     return html`
         <${Form} name="account"
                  form=${form}
@@ -169,22 +185,23 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name=${['settlementType', 'accountType']}
                                          noStyle
                                          rules=${[{ required: true, message: '请选择结算类型' }]}>
-                                <${Select} style=${{ width: '168px', }}>
+                                <${Select} style=${{ width: '168px', }} onChange=${handleAccountTypeChange}>
                                     <${Option} value="1">对私账户</Option>
-                                    <${Option} value="2">对公账户</Option>
+                                    <${Option} disabled=${isMerchantType3} value="2">对公账户</Option>
                                 </Select>
                             </FormItem>
                             <${FormItem} name=${['settlementType', 'settler']}
                                          noStyle
                                          rules=${[{ required: true, message: '请选择结算类型' }]}>
-                                <${Select} onChange=${handleSelectLegalPersonSettlement} style=${{ width: '168px', }}>
+                                <${Select} onChange=${handleSelectLegalPersonSettlement}
+                                           style=${{ width: '168px', display: isAccountType2 ? 'none' : 'block' }}>
                                     <${Option} value="1">法人结算</Option>
                                     <${Option} value="0">非法人结算</Option>
                                 </Select>
                             </FormItem>
                         </Space>
                     </FormItem>
-                    ${settler === '0' && html`
+                    ${!isAccountType2 && settler === '0' && html`
                         <${FormItem} label="非法人授权书" required>
                             <div class="photo-tip">
                                 <a target="_blank"
@@ -235,11 +252,25 @@ export default function BillingInfoForm(props) {
                             <${PeriodInput}/>
                         </FormItem>
                     `}
-                    <${FormItem} label="银行卡照片"
-                                 name="bankCardPhoto"
-                                 rules=${[{ required: true, message: '请上传银行卡照片', }]}>
-                        <${PictureInput} onFileInput=${handleInputBankCard}/>
-                    </FormItem>
+                    ${!isAccountType2 && html`
+                        <${FormItem} label="银行卡照片"
+                                     name="bankCardPhoto"
+                                     rules=${[{ required: true, message: '请上传银行卡照片', }]}>
+                            <${PictureInput} onFileInput=${handleInputBankCard}/>
+                        </FormItem>
+                    `}
+
+                    ${isAccountType2 && html`
+
+                        <${FormItem} label="开户许可证照片"
+                                     name="accountPermitPhoto "
+                                     extra="若无开户许可证，则可用以下材料代替：1、《基本存款账户信息》；2、印鉴卡片；3、商户自行填写开户证明，需包含账户名称、账号、开户支行，并加盖公章"
+                                     rules=${[{ required: true, message: '请上传银行卡照片', }]}>
+                            <${PictureInput}/>
+                        </FormItem>
+
+                    `}
+
                     <${FormItem} label="银行卡号"
                                  name="bankCardNumber"
                                  rules=${[
@@ -262,6 +293,50 @@ export default function BillingInfoForm(props) {
                             })}
                         </Select>
                     </FormItem>
+
+                    ${isAccountType2 && html`
+
+                        <${FormItem} name="branchBankInfo" label="支行信息" required>
+                            <${RadioGroup} onChange=${handleBranchBankInfoChange}>
+                                <${Radio} value="select">所属支行</Radio>
+                                <${Radio} value="input">填写支行联行号</Radio>
+                            </RadioGroup>
+                        </FormItem>
+
+                        ${branchBankInfoChange === 'select' && html`
+                            <${FormItem} label="支行所在地"
+                                         name="branchBankArea"
+                                         rules=${[{ required: true, message: '请选择支行所在地', }]}>
+                                <${Cascader} options=${branch_bank_area} placeholder="请选择支行所在地"/>
+                            </FormItem>
+
+                            <${FormItem} label="所属支行"
+                                         name="bank"
+                                         rules=${[{ required: true, message: '请选择所属支行', }]}>
+                                <${Select} showSearch
+                                           optionFilterProp="children"
+                                           filterOption=${(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                                           placeholder="请选择所属支行">
+                                    ${[].map(it => {
+                                        return html`
+                                            <${Option} value=${it.bankNo}>${it.bankName}</Option>
+                                        `
+                                    })}
+                                </Select>
+                            </FormItem>
+                        `}
+
+                        ${branchBankInfoChange === 'input' && html`
+                            <${FormItem} label="联行号"
+                                         name="branchBankNumber"
+                                         rules=${[
+                                             { required: true, message: '请输入联行号', },
+                                             { pattern: /^[0-9]{12,19}$/, message: '请输入正确联行号', },
+                                         ]}>
+                                <${Input} placeholder="请输入联行号"/>
+                            </FormItem>
+                        `}
+                    `}
                 </div>
             </div>
             <div class=${_BillingInfoForm} style=${{ marginTop: '8px' }}>
@@ -275,7 +350,7 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name="wechatPayRate"
                                          noStyle
                                          rules=${[{ required: true }]}>
-                                <${Input} style=${{ width: '50%', }}/>
+                                <${Input} disabled style=${{ width: '50%', }}/>
                             </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
@@ -288,7 +363,7 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name="alipayRate"
                                          noStyle
                                          rules=${[{ required: true }]}>
-                                <${Input} style=${{ width: '50%', }}/>
+                                <${Input} disabled style=${{ width: '50%', }}/>
                             </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
@@ -301,7 +376,7 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name="unionPayRate"
                                          noStyle
                                          rules=${[{ required: true }]}>
-                                <${Input} style=${{ width: '50%', }}/>
+                                <${Input} disabled style=${{ width: '50%', }}/>
                             </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
@@ -319,7 +394,7 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name="cardRate"
                                          noStyle
                                          rules=${[{ required: true }]}>
-                                <${Input} style=${{ width: '50%', }}/>
+                                <${Input} disabled style=${{ width: '50%', }}/>
                             </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>
@@ -333,7 +408,7 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name="cappedFee"
                                          noStyle
                                          rules=${[{ required: true }]}>
-                                <${Input} style=${{ width: '50%', }}/>
+                                <${Input} disabled style=${{ width: '50%', }}/>
                             </FormItem>
                             <span class="unit-tip">元</span>
                             <${Tooltip} title="若封顶设置为18元代理商则可能无返佣，建议封顶金额设置大于18元">
@@ -350,7 +425,7 @@ export default function BillingInfoForm(props) {
                             <${FormItem} name="creditCardRate"
                                          noStyle
                                          rules=${[{ required: true }]}>
-                                <${Input} style=${{ width: '50%', }}/>
+                                <${Input} disabled style=${{ width: '50%', }}/>
                             </FormItem>
                             <span class="unit-tip">(单位:千分之一)</span>
                         </FormItem>

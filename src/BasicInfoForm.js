@@ -79,6 +79,17 @@ export default function BasicInfoForm(props) {
             return
         }
         setMerchantType(selectedMerchantType)
+        if (selectedMerchantType === '3') {
+            dispatch({
+                type: 'setMerchantType3',
+                payload: true,
+            })
+        } else {
+            dispatch({
+                type: 'setMerchantType3',
+                payload: false,
+            })
+        }
     }
 
     function handleFinish(ev) {
