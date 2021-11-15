@@ -22,7 +22,7 @@ function getFormByStep(step) {
 }
 
 const initialState = {
-    step: 0,
+    step: 2,
     // form data
     accountInfo: {
         ownership: undefined,                     // 所属授理商
@@ -59,6 +59,7 @@ const initialState = {
         settlerIdPhoto: undefined,
         branchBankNumber: undefined,
         branchBankInfo: 'select',
+        branchBankArea: [],
         // rate
         wechatPayRate: '2.5',                                               // 微信费率
         alipayRate: '2.5',                                                  // 支付宝费率

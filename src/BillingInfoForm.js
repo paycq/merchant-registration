@@ -10,13 +10,14 @@ import {
     Row,
     Divider,
     Tooltip,
-    InfoCircleOutlined, useState, moment, Radio, Cascader,
+    InfoCircleOutlined, useState, moment, Radio, Cascader, useEffect,
 } from './modules.js'
 import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import bankList from './data/bank_list.js'
 import { uploadBankcard, uploadIdCard } from './apis/upload.js'
 import branch_bank_area from './data/branch_bank_area.js'
+import { getBankInfo } from './apis/bank.js'
 
 const { Option } = Select
 const { Item: FormItem } = Form
@@ -167,6 +168,31 @@ export default function BillingInfoForm(props) {
         setBranchBankInfoChange(ev.target.value)
     }
 
+    const [bank, setBank] = useState(state.billingInfo.bank)
+    const [branchBankArea, setBranchBankArea] = useState(state.billingInfo.branchBankArea[1])
+
+    function handleBankChange(ev) {
+        setBank(ev)
+    }
+
+    function handleBranchBankArea(ev) {
+        setBranchBankArea(ev[1])
+    }
+
+    useEffect(() => {
+        if (!bank || !branchBankArea) {
+            return
+        }
+        const bankInfo = bankList.find(it => it.bankNo === bank)
+        if (!bankInfo) {
+            return
+        }
+        getBankInfo(branchBankArea, bankInfo.bankName).then((res) => {
+            console.log(res)
+        })
+
+    }, [bank, branchBankArea])
+
     return html`
         <${Form} name="account"
                  form=${form}
@@ -283,6 +309,7 @@ export default function BillingInfoForm(props) {
                                  name="bank"
                                  rules=${[{ required: true, message: '请选择所属银行', }]}>
                         <${Select} showSearch
+                                   onChange=${handleBankChange}
                                    optionFilterProp="children"
                                    filterOption=${(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                                    placeholder="请选择所属银行">
@@ -307,11 +334,12 @@ export default function BillingInfoForm(props) {
                             <${FormItem} label="支行所在地"
                                          name="branchBankArea"
                                          rules=${[{ required: true, message: '请选择支行所在地', }]}>
-                                <${Cascader} options=${branch_bank_area} placeholder="请选择支行所在地"/>
+                                <${Cascader} onChange=${handleBranchBankArea} options=${branch_bank_area}
+                                             placeholder="请选择支行所在地"/>
                             </FormItem>
 
                             <${FormItem} label="所属支行"
-                                         name="bank"
+                                         name="branchBankNumber"
                                          rules=${[{ required: true, message: '请选择所属支行', }]}>
                                 <${Select} showSearch
                                            optionFilterProp="children"
