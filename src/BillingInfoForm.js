@@ -176,8 +176,10 @@ export default function BillingInfoForm(props) {
     }
 
     function handleBranchBankArea(ev) {
-        setBranchBankArea(ev[1])
+        setBranchBankArea(ev[0])
     }
+
+    const [branchBankList, setBranchBankList] = useState([])
 
     useEffect(() => {
         if (!bank || !branchBankArea) {
@@ -188,7 +190,11 @@ export default function BillingInfoForm(props) {
             return
         }
         getBankInfo(branchBankArea, bankInfo.bankName).then((res) => {
-            console.log(res)
+            if (!res.success) {
+                return
+            }
+            const data = res.data || []
+            setBranchBankList(data)
         })
 
     }, [bank, branchBankArea])
@@ -345,9 +351,9 @@ export default function BillingInfoForm(props) {
                                            optionFilterProp="children"
                                            filterOption=${(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                                            placeholder="请选择所属支行">
-                                    ${[].map(it => {
+                                    ${branchBankList.map(it => {
                                         return html`
-                                            <${Option} value=${it.bankNo}>${it.bankName}</Option>
+                                            <${Option} value=${it.unionpay_code}>${it.branch_name}</Option>
                                         `
                                     })}
                                 </Select>
