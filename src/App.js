@@ -22,7 +22,7 @@ function getFormByStep(step) {
 }
 
 const initialState = {
-    step: 0,
+    step: 2,
     // form data
     accountInfo: {
         ownership: undefined,                     // 所属授理商

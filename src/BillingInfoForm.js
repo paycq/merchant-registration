@@ -16,7 +16,7 @@ import PictureInput from './components/PictureInput.js'
 import PeriodInput from './components/PeriodInput.js'
 import bankList from './data/bank_list.js'
 import { uploadBankcard, uploadIdCard } from './apis/upload.js'
-import branch_bank_area from './data/branch_bank_area.js'
+import branch_bank_area from './data/bankArea.js'
 import { getBankInfo } from './apis/bank.js'
 
 const { Option } = Select
@@ -169,14 +169,16 @@ export default function BillingInfoForm(props) {
     }
 
     const [bank, setBank] = useState(state.billingInfo.bank)
-    const [branchBankArea, setBranchBankArea] = useState(state.billingInfo.branchBankArea[1])
+    const [branchBankArea, setBranchBankArea] = useState(undefined)
 
     function handleBankChange(ev) {
         setBank(ev)
     }
 
-    function handleBranchBankArea(ev) {
-        setBranchBankArea(ev[0])
+    function handleBranchBankArea(ev, options) {
+        const bankCode = (options[options.length - 1] || {}).bankCityCode
+        console.log('bankCode', bankCode)
+        setBranchBankArea(bankCode)
     }
 
     const [branchBankList, setBranchBankList] = useState([])
