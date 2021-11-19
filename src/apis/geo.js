@@ -47,13 +47,18 @@ export async function searchProvince(s) {
 
 export async function searchCity(s, p = '') {
     const data = await search(s) || []
-    return data.filter(it => it.code.startsWith(p.substring(0, 2)) && it.code.endsWith('00')).map(it => {
+    let cityList = data.filter(it => {
+        return it.code.startsWith(p.substring(0, 2)) && it.code.endsWith('00')
+    }).map(it => {
         return {
             ...it,
             name: it.name.split(',').pop(),
         }
     }).filter(it => it.name.includes(s))
-
+    if (cityList.length > 1) {
+        cityList = cityList.filter(it => !it.code.endsWith('0000'))
+    }
+    return cityList
 }
 
 export async function searchDistrict(s, p = '') {
