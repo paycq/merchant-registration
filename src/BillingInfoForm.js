@@ -221,7 +221,7 @@ export default function BillingInfoForm(props) {
                                          rules=${[{ required: true, message: '请选择结算类型' }]}>
                                 <${Select} style=${{ width: '168px', }} onChange=${handleAccountTypeChange}>
                                     <${Option} value="1">对私账户</Option>
-                                    <${Option} disabled=${isMerchantType3} value="2">对公账户</Option>
+                                    <${Option} disabled=${!isMerchantType3} value="2">对公账户</Option>
                                 </Select>
                             </FormItem>
                             <${FormItem} name=${['settlementType', 'settler']}

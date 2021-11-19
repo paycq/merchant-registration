@@ -3,21 +3,16 @@ import { csrfToken } from './csrfToken.js'
 
 const API = '/home/xiaowei'
 
-function normalizeName(it) {
-    const split = it.name.split(',')
-    const name = split[split.length - 1] || it.name
-    return {
-        ...it,
-        name,
-    }
-}
+let list
 
 async function search(s) {
+    if (list) {
+        return list
+    }
     const params = new URLSearchParams()
-    params.append('action', 'searchZipCode')
-    params.append('s', s)
+    params.append('action', 'searchAddCode')
+    params.append('s', '')
     try {
-
         const response = await fetch(API, {
             method: 'POST',
             credentials: 'include',
@@ -27,24 +22,52 @@ async function search(s) {
             body: params,
         })
         const result = await response.json()
-        return (result.data || []).map(normalizeName)
+        list = (result.data || [])
+        return list
     } catch (err) {
         message.error(err.message)
     }
 }
 
+let provinceList
+
 export async function searchProvince(s) {
+    if (provinceList) {
+        return provinceList.filter(it => it.name.includes(s))
+    }
     const data = await search(s) || []
-    return data.filter(it => it.code.endsWith('0000'))
+    provinceList = data.filter(it => it.code.endsWith('0000')).map(it => {
+        return {
+            ...it,
+            name: it.name.split(',').pop(),
+        }
+    })
+    return provinceList.filter(it => it.name.includes(s))
 }
 
 export async function searchCity(s, p = '') {
     const data = await search(s) || []
-    return data.filter(it => it.code.startsWith(p.substring(0, 2)) && it.code.endsWith('00'))
+    return data.filter(it => it.code.startsWith(p.substring(0, 2)) && it.code.endsWith('00')).map(it => {
+        return {
+            ...it,
+            name: it.name.split(',').pop(),
+        }
+    }).filter(it => it.name.includes(s))
 
 }
 
 export async function searchDistrict(s, p = '') {
     const data = await search(s) || []
-    return data.filter(it => it.code.startsWith(p.substring(0, 2)) && !it.code.endsWith('00'))
+    return data.filter(it => {
+        if (String(p).endsWith('0000')) {
+            return it.code.startsWith(p.substring(0, 2)) && !it.code.endsWith('00')
+        } else {
+            return it.code.startsWith(p.substring(0, 4)) && !it.code.endsWith('00')
+        }
+    }).map(it => {
+        return {
+            ...it,
+            name: it.name.split(',').pop(),
+        }
+    }).filter(it => it.name.includes(s))
 }
