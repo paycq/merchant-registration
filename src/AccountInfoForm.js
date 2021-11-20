@@ -1,6 +1,6 @@
-import { css, html, Button, Form, Input, Select } from './modules.js'
+import {css, html, Button, Form, Input, Select} from './modules.js'
 
-const { Item: FormItem } = Form
+const {Item: FormItem} = Form
 
 const _AccountInformationForm = css`
   background-color: #fff;
@@ -27,12 +27,12 @@ const _AccountInformationForm = css`
 `
 
 export default function AccountInfoForm(props) {
-    const { state, dispatch } = props
+    const {state, dispatch} = props
     const [form] = Form.useForm()
 
     function handleFinish(ev) {
-        dispatch({ type: 'updateAccountInfo', payload: ev, })
-        dispatch({ type: 'nextStep' })
+        dispatch({type: 'updateAccountInfo', payload: ev,})
+        dispatch({type: 'nextStep'})
     }
 
     function handleFinishFailed(ev) {
@@ -47,7 +47,7 @@ export default function AccountInfoForm(props) {
         const registrationMobile = form.getFieldValue('registrationMobile')
         const loginAccount = form.getFieldValue('loginAccount')
         if (registrationMobile && loginAccount === undefined) {
-            form.setFieldsValue({ loginAccount: registrationMobile })
+            form.setFieldsValue({loginAccount: registrationMobile})
         }
     }
 
@@ -60,32 +60,36 @@ export default function AccountInfoForm(props) {
                          onFinishFailed=${handleFinishFailed}
                          initialValues=${state.accountInfo}
                          form=${form}
-                         labelCol=${{ span: 4 }}
-                         wrapperCol=${{ span: 10 }}
+                         labelCol=${{span: 4}}
+                         wrapperCol=${{span: 10}}
                          autoComplete="off">
                     <${FormItem} label="所属授理商"
                                  name="ownership"
-                                 rules=${[{ required: true, message: '请选择所属授理商', }]}>
+                                 rules=${[{required: true, message: '请选择所属授理商',}]}>
                         <${Select} placeholder="请选择">
-                            <Option value="1">安徽色鲁特网络科技有限公司</Option>
+                            ${state.fidOptionsList.map(it => {
+                                return html`
+                                    <Option value=${it.value}>${it.label}</Option>
+                                `
+                            })}
                         </Select>
                     </FormItem>
                     <${FormItem} label="注册手机"
                                  name="registrationMobile"
                                  rules=${[
-                                     { required: true, message: '请输入注册手机', },
-                                     { pattern: /^1[0-9]{10}$/, message: '请输入11位正确手机号', },
+                                     {required: true, message: '请输入注册手机',},
+                                     {pattern: /^1[0-9]{10}$/, message: '请输入11位正确手机号',},
                                  ]}>
                         <${Input} placeholder="11位正确手机号，用于登录账号密码找回"/>
                     </FormItem>
                     <${FormItem} label="登陆账号"
                                  name="loginAccount"
                                  extra="注：商户初始密码为注册手机号后6位"
-                                 rules=${[{ required: true, message: '请输入登陆账号', }]}>
+                                 rules=${[{required: true, message: '请输入登陆账号',}]}>
                         <${Input} onFocus=${handleLoginAccountFocus} placeholder="建议使用手机号，支持2-50位数字/字母/中文" allowClear/>
                     </FormItem>
                     <!-- button -->
-                    <${FormItem} wrapperCol=${{ offset: 10, span: 16 }}>
+                    <${FormItem} wrapperCol=${{offset: 10, span: 16}}>
                         <${Button} onClick=${handleClickBack} htmlType="button">
                             返回
                         </Button>

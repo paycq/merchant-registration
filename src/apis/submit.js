@@ -7,7 +7,7 @@ function getParamsFromState(state) {
     const params = new URLSearchParams()
     params.append('action', 'applyV3')
     params.append('id', '')
-    params.append('fid', '')
+    params.append('fid', state.accountInfo.ownership)
     params.append('base_info[merchant_type]', state.basicInfo.merchantType)
     params.append('base_info[license_photo]', state.businessLicense.urlValue || '')
     params.append('base_info[license_id]', state.businessLicenseNo || '')

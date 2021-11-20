@@ -22,6 +22,7 @@ function getFormByStep(step) {
 }
 
 const initialState = {
+    fidOptionsList: [],
     step: 0,
     // form data
     accountInfo: {
