@@ -1,4 +1,4 @@
-import { css, cx, html, moment, useReducer } from './modules.js'
+import {css, cx, html, moment, useReducer} from './modules.js'
 import StepContent from './StepContent.js'
 import AccountInfoForm from './AccountInfoForm.js'
 import BasicInfoForm from './BasicInfoForm.js'
@@ -98,6 +98,10 @@ function reducer(state, action) {
             return {
                 ...state,
                 accountInfo: payload,
+                storeInfo: {
+                    ...state.storeInfo,
+                    storePhone: payload.registrationMobile,
+                },
             }
         case 'updateBasicInfo':
             return {
@@ -105,6 +109,10 @@ function reducer(state, action) {
                 basicInfo: {
                     ...state.basicInfo,
                     ...payload,
+                },
+                storeInfo: {
+                    ...state.storeInfo,
+                    storeName: payload.merchantAbbreviation,
                 },
             }
         case 'updateBillingInfo':
@@ -158,9 +166,9 @@ const _App = css`
   background-color: #f4f4f4;
 `
 
-export default function MerchantRegistration(props) {
+export default function MerchantRegistration(props = {}) {
 
-    const [state, dispatch] = useReducer(reducer, initialState)
+    const [state, dispatch] = useReducer(reducer, {...initialState, ...props})
 
     const InputForm = getFormByStep(state.step)
 

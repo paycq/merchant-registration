@@ -1,5 +1,5 @@
-import { csrfToken } from './csrfToken.js'
-import { message } from '../modules.js'
+import {csrfToken} from './csrfToken.js'
+import {message} from '../modules.js'
 
 const API = '/home/xiaowei'
 
@@ -9,6 +9,11 @@ function getParamsFromState(state) {
     params.append('id', '')
     params.append('fid', '')
     params.append('base_info[merchant_type]', state.basicInfo.merchantType)
+    params.append('base_info[license_photo]', state.businessLicense.urlValue || '')
+    params.append('base_info[license_id]', state.businessLicenseNo || '')
+    params.append('base_info[license_address]', state.businessLicenseAddress || '')
+    params.append('base_info[license_time_start]', state.basicInfo.businessLicensePeriod?.period[0].format('YYYY-MM-DD') || '')
+    params.append('base_info[license_time_end]', state.basicInfo.businessLicensePeriod?.longTerm === true ? '长期' : state.basicInfo?.businessLicensePeriod.period[1].format('YYYY-MM-DD'))
     params.append('merchant_code', state.accountInfo.loginAccount)
     params.append('base_info[merchant_short_name]', state.basicInfo.merchantAbbreviation)
     params.append('base_info[contact_phone]', state.accountInfo.registrationMobile)
@@ -35,7 +40,7 @@ function getParamsFromState(state) {
     params.append('legal_person[hand_hold_id_card_photo]', state.basicInfo.holdingIdPhoto?.urlValue || '')
     params.append('account_info[account_type]', state.billingInfo.settlementType?.accountType)
     params.append('account_info[legal_flag]', state.billingInfo.settlementType?.settler)
-    params.append('account_info[unionpay_code]', state.billingInfo.branchBankNumber)
+    params.append('account_info[unionpay_code]', state.billingInfo.branchBankNumber || '')
     params.append('account_info[real_name]', state.billingInfo.settlerName || state.basicInfo.name)
     params.append('account_info[id_card_no]', state.billingInfo.settlerIdCardNumber || state.basicInfo.idCardNumber)
     params.append('account_info[bank_card_no]', state.billingInfo.bankCardNumber)
