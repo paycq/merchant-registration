@@ -42,7 +42,7 @@ function getParamsFromState(state) {
     params.append('account_info[legal_flag]', state.billingInfo.settlementType?.settler)
     params.append('account_info[unionpay_code]', state.billingInfo.branchBankNumber || state.billingInfo.bankCardNumber)
     params.append('account_info[real_name]', state.billingInfo.settlerName || state.basicInfo.name)
-    params.append('account_info[id_card_no]', state.billingInfo.settlerIdCardNumber || state.basicInfo.idCardNumber)
+    params.append('account_info[id_card_no]', state.billingInfo.settlerIdCardNumber || state.basicInfo.idCardNumber || '')
     params.append('account_info[bank_card_no]', state.billingInfo.bankCardNumber)
     params.append('account_info[id_card_front_photo]', state.billingInfo.settlerIdPhoto?.A?.urlValue || state.basicInfo.legalPersonIdPhoto.A?.urlValue || '')
     params.append('account_info[id_card_back_photo]', state.billingInfo.settlerIdPhoto?.B?.urlValue || state.basicInfo.legalPersonIdPhoto.B?.urlValue || '')
