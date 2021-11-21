@@ -273,7 +273,10 @@ export default function BillingInfoForm(props) {
                         </FormItem>
                         <${FormItem} label="身份证号"
                                      name="settlerIdCardNumber"
-                                     rules=${[{ required: true, message: '请输入身份证号', }]}>
+                                     rules=${[
+                                         { required: true, message: '请输入身份证号', },
+                                         { pattern: /^\d{14}(\d\d\d)?[0-9X]$/, message: '请输入15/18为身份证件号', },
+                                     ]}>
                             <${Input} placeholder="请输入身份证号"/>
                         </FormItem>
                         <${FormItem} label="身份证有效期"
