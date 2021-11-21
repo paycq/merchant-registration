@@ -41,10 +41,10 @@ export default function PictureInput(props) {
             try {
                 const result = await uploadImage(file)
                 if (!result || result.status) {
-                    onError(new Error(result.message))
+                    onError(new Error(result?.message || '上传失败，请重试'))
                     return
                 }
-                message.info(result.message)
+                message.info(result?.message || '上传成功')
                 const url = `/uploads/xw/${result.url}.png`
                 onSuccess(url)
                 onChange({
