@@ -1,5 +1,5 @@
-import {csrfToken} from './csrfToken.js'
-import {message} from '../modules.js'
+import { csrfToken } from './csrfToken.js'
+import { message } from '../modules.js'
 
 const API = '/home/xiaowei'
 
@@ -9,9 +9,9 @@ function getParamsFromState(state) {
     params.append('id', '')
     params.append('fid', state.accountInfo.ownership)
     params.append('base_info[merchant_type]', state.basicInfo.merchantType)
-    params.append('base_info[license_photo]', state.businessLicense.urlValue || '')
-    params.append('base_info[license_id]', state.businessLicenseNo || '')
-    params.append('base_info[license_address]', state.businessLicenseAddress || '')
+    params.append('base_info[license_photo]', state.basicInfo.businessLicense.urlValue || '')
+    params.append('base_info[license_id]', state.basicInfo.businessLicenseNo || '')
+    params.append('base_info[license_address]', state.basicInfo.businessLicenseAddress || '')
     params.append('base_info[license_time_start]', state.basicInfo.businessLicensePeriod?.period[0].format('YYYY-MM-DD') || '')
     params.append('base_info[license_time_end]', state.basicInfo.businessLicensePeriod?.longTerm === true ? '长期' : state.basicInfo?.businessLicensePeriod.period[1].format('YYYY-MM-DD'))
     params.append('merchant_code', state.accountInfo.loginAccount)
