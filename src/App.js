@@ -1,10 +1,13 @@
-import {css, cx, html, moment, useReducer} from './modules.js'
+import { css, cx, html, message, useEffect, useReducer } from './modules.js'
 import StepContent from './StepContent.js'
 import AccountInfoForm from './AccountInfoForm.js'
 import BasicInfoForm from './BasicInfoForm.js'
 import BillingInfoForm from './BillingInfoForm.js'
 import StoreInfoForm from './StoreInfoForm.js'
 import SubmitForReview from './SubmitForReview.js'
+import { getDetail } from './apis/detail.js'
+import getStateFromDetail from './getStateFromDetail.js'
+import Loading from './Loading.js'
 
 function getFormByStep(step) {
     switch (step) {
@@ -45,6 +48,8 @@ const initialState = {
         businessAddress: undefined,                           // 经营地址
         addressLocation: [],                                    // 经纬度
         holdingIdPhoto: undefined,                               // 手持身份证照片
+        idCardNumber: undefined,
+        name: undefined,
     },
     billingInfo: {
         settlementType: {                                                   // 结算类型
@@ -85,6 +90,8 @@ const initialState = {
 function reducer(state, action) {
     const payload = action.payload || {}
     switch (action.type) {
+        case 'initFromDetail':
+            return getStateFromDetail(payload, state)
         case 'nextStep':
             return {
                 ...state,
@@ -167,9 +174,35 @@ const _App = css`
   background-color: #f4f4f4;
 `
 
+
 export default function MerchantRegistration(props = {}) {
 
-    const [state, dispatch] = useReducer(reducer, {...initialState, ...props})
+    const [state, dispatch] = useReducer(reducer, { ...initialState, ...props })
+
+    useEffect(() => {
+        if (!props.id) {
+            return
+        }
+        ;(async () => {
+            const result = await getDetail(props.id)
+            if (!result || result.status) {
+                message.error(result?.message || '获取审核详情失败')
+            }
+            dispatch({
+                type: 'initFromDetail',
+                payload: result.data,
+            })
+        })()
+
+
+    }, [])
+
+    if (props.id && typeof state.id !== 'number') {
+        return html`
+            <${Loading}></Loading>
+        `
+    }
+    console.log(JSON.stringify(state, null, 2))
 
     const InputForm = getFormByStep(state.step)
 

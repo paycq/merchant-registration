@@ -1,4 +1,4 @@
-import { css, cx, html, message, Modal, PlusOutlined, Upload, useState } from '../modules.js'
+import { css, cx, html, message, Modal, PlusOutlined, Upload, useEffect, useState } from '../modules.js'
 import { uploadImage } from '../apis/upload.js'
 
 const _PictureInput = css`
@@ -30,6 +30,10 @@ export default function PictureInput(props) {
     const [previewVisible, setPreviewVisible] = useState(false)
     const [previewTitle, setPreviewTitle] = useState('')
     const [previewImage, setPreviewImage] = useState('')
+
+    if (value && value.urlValue) {
+        value.thumbUrl = `/uploads/xw/${value.urlValue}.png`
+    }
 
     const uploadProps = {
         accept: '.png,.jpg,.jpeg',
@@ -66,8 +70,9 @@ export default function PictureInput(props) {
         },
         async onPreview(ev) {
             const file = value
-            setPreviewTitle(file.name)
-            setPreviewImage(file.url)
+            setPreviewTitle(file.name || '')
+            const url = `/uploads/xw/${file.urlValue}.png`
+            setPreviewImage(url)
             setPreviewVisible(true)
         },
     }

@@ -1,4 +1,4 @@
-import {render, createElement, injectGlobal, html, ConfigProvider, locales} from './modules.js'
+import { render, createElement, injectGlobal, html, ConfigProvider, locales } from './modules.js'
 import App from './App.js'
 
 injectGlobal`
@@ -20,14 +20,28 @@ injectGlobal`
 `
 
 const fidOptionsList = Array.from(document.querySelector('#fid')?.children || []).map(it => ({
-    value: it.value,
+    value: Number(it.value),
     label: it.text
 }))
+
+function getId() {
+    const id = location.pathname.split('/').pop()
+    if (id !== '0' && id) {
+        return id
+    }
+}
+
+const appProps = {
+    fidOptionsList,
+    id: getId(),
+}
+
+
 
 function AppWrapper() {
     return html`
         <${ConfigProvider} locale=${locales['zh_CN']}>
-            <${App} fidOptionsList=${fidOptionsList}/>
+            <${App} ...${appProps}/>
         </ConfigProvider>
     `
 }
