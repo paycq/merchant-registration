@@ -39,7 +39,7 @@ export default function getStateFromDetail(detail, state) {
             merchantType: data.base_info.merchant_type,                                // 商户类型
             email: data.base_info.email,                                // 联系邮箱
             merchantAbbreviation: data.base_info.merchant_short_name,                                 // 商户简称
-            businessLicense: { urlValue: data.license_info.license_photo },                                         // 营业执照
+            businessLicense: { urlValue: detail.license_photo },                                         // 营业执照
             companyName: data.license_info.license_name,                                          // 公司名称
             businessLicenseNo: data.license_info.license_id,                            // 营业执照号
             businessLicenseAddress: data.license_info.license_address,                        // 营业执照注册地址
@@ -51,8 +51,8 @@ export default function getStateFromDetail(detail, state) {
                 longTerm: data.license_info.license_time_end === '长期'
             },                   // 营业执照有效期
             legalPersonIdPhoto: {
-                A: { urlValue: data.legal_person.legal_id_card_front_photo },
-                B: { urlValue: data.legal_person.legal_id_card_back_photo },
+                A: { urlValue: detail.legal_id_card_front_photo },
+                B: { urlValue: detail.legal_id_card_back_photo },
             },                                      // 法人身份证照片
             idPeriod: {
                 period: [
@@ -72,7 +72,7 @@ export default function getStateFromDetail(detail, state) {
                 data.address_info.longitude,
                 data.address_info.latitude,
             ],                                    // 经纬度
-            holdingIdPhoto: { urlValue: data.legal_person.hand_hold_id_card_photo },
+            holdingIdPhoto: { urlValue: detail.hand_hold_id_card_photo },
             idCardNumber: data.legal_person.legal_num,
             name: data.legal_person.legal_name,
         },
@@ -83,15 +83,15 @@ export default function getStateFromDetail(detail, state) {
                 accountType: data.account_info.account_type,                                  // 对私账户
                 settler: data.account_info.legal_flag,                                        // 法人结算
             },
-            bankCardPhoto: { urlValue: data.account_info.bank_card_photo },                                           // 银行卡照片
+            bankCardPhoto: { urlValue: detail.bank_card_photo },                                           // 银行卡照片
             bankCardNumber: data.account_info.bank_card_no,                                          // 银行卡号
             bank: undefined,                                                    // 所属银行
             //
             settlerName: data.account_info.real_name,
             settlerIdCardNumber: data.account_info.id_card_no,
             settlerIdPhoto: {
-                A: { urlValue: data.account_info.id_card_front_photo },
-                B: { urlValue: data.account_info.id_card_back_photo },
+                A: { urlValue: detail.id_card_front_photo },
+                B: { urlValue: detail.id_card_back_photo },
             },
             branchBankNumber: data.account_info.unionpay_code,
             branchBankInfo: 'input',
@@ -110,9 +110,9 @@ export default function getStateFromDetail(detail, state) {
             storeName: data.shop_info.store_name,               // 门店名称
             storePhone: data.shop_info.store_phone,             // 门店电话
             // photos
-            storeFrontPhoto: { urlValue: data.shop_info.store_front_photo },            // 门店门头照
-            payBoardPhoto: { urlValue: data.shop_info.store_cash_photo },              // 收银台照片
-            storeEnvironmentPhoto: { urlValue: data.shop_info.store_env_photo },      // 店内环境照
+            storeFrontPhoto: { urlValue: detail.store_front_photo },            // 门店门头照
+            payBoardPhoto: { urlValue: detail.store_cash_photo },              // 收银台照片
+            storeEnvironmentPhoto: { urlValue: detail.store_env_photo },      // 店内环境照
             // licensePhoto: undefined,               // 经营许可证
             // otherPhoto: undefined,                 // 其他照片
         },

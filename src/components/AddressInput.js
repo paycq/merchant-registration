@@ -94,6 +94,18 @@ export default function AddressInput(props) {
         setOption2(data)
     }, 500))
 
+    useEffect(() => {
+        if (value[0]) {
+            handleSearch0()
+        }
+        if (value[1]) {
+            handleSearch1()
+        }
+        if (value[2]) {
+            handleSearch2()
+        }
+    }, [])
+
     return html`
         <${Space}>
             <${Select} showSearch

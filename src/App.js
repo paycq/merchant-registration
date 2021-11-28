@@ -202,8 +202,6 @@ export default function MerchantRegistration(props = {}) {
             <${Loading}></Loading>
         `
     }
-    console.log(JSON.stringify(state, null, 2))
-
     const InputForm = getFormByStep(state.step)
 
     return html`
